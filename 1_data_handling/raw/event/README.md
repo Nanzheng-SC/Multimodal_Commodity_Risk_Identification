@@ -1,17 +1,31 @@
-# raw/event GitHub 上传说明
+# raw/event
 
-本目录仅上传事件清单主文件。
+## 目录定位
 
-## 上传保留
+本目录保存轻量事件清单，用于补充重大事件节点，不作为当前主线建模必需输入。
 
-- `event_manifest.jsonl`
+## 文件结构
 
-## 本地生成或忽略
+| 文件 | 作用 |
+| --- | --- |
+| `event_manifest.jsonl` | 事件清单主文件 |
 
-- 事件扩展脚本、临时候选文件和实验性补充文件不上传
+## 主表字段
 
-## 本地重建入口
+- `event_id`
+- `date`
+- `year_month`
+- `title`
+- `text`
+- `event_tags`
+- `country_focus`
+- `source_name`
+- `source_type`
+- `url`
+- `notes`
 
-```powershell
-python 1_data_handling/_collection_scripts/run_collection.py --start-date 2022-04-17 --end-date 2026-04-16 --storage-mode light
-```
+## 当前状态
+
+- 当前共 `18` 条事件记录
+- 时间范围为 `2022-07-27` 至 `2025-06-03`
+- 主要用途是提供事件回看和后续扩展入口

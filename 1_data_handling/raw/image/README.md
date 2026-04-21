@@ -1,30 +1,49 @@
-# raw/image GitHub 上传说明
+# raw/image
 
-本目录上传图片主清单、覆盖统计、采集报告和正式缩略图。
+## 目录定位
 
-## 上传保留
+本目录保存图片主清单、按日覆盖统计、采集报告和 WebP 缩略图，是图像编码模块的直接输入。
 
-- `image_manifest_commons_cleaned.jsonl.gz`
-- `image_daily_coverage.json`
-- `image_daily_coverage.csv`
-- `image_collection_report.json`
-- `thumbnails_webp/`
+## 文件结构
 
-## 本地生成或忽略
+| 文件 | 作用 |
+| --- | --- |
+| `image_manifest_commons_cleaned.jsonl.gz` | 图片主清单 |
+| `image_daily_coverage.json` | 按日覆盖统计 |
+| `image_daily_coverage.csv` | 按日覆盖统计表格版 |
+| `image_collection_report.json` | 图片来源、命中数和存储摘要 |
+| `thumbnails_webp/` | 统一缩略图目录，供图像编码直接读取 |
 
-- 原始图片下载目录不上传
-- 临时候选表、下载缓存和失败重试缓存不上传
-- 新一轮补采得到的缩略图先本地核验，再决定是否进入仓库
+## 主表字段
 
-## 本地重建入口
+图片主清单核心字段包括：
 
-```powershell
-python 1_data_handling/_collection_scripts/collect_daily_image_dataset.py --start-date 2022-04-17 --end-date 2026-04-16 --storage-mode light
-```
+- 标识与时间：`image_id`、`date`、`year_month`、`published_at`
+- 来源：`source_name`、`source_stream`、`source_type`、`domain`、`open_source`
+- 检索与场景：`query_keyword`、`country_focus`、`roi_name`、`bbox`、`scene_tags`
+- 图像信息：`image_url`、`thumbnail_path`、`mime`、`thumbnail_mime`、`width`、`height`
+- 版权与署名：`credit`、`artist`、`license_short`、`license_url`
+- 质量与状态：`collection_status`、`content_storage`、`cloud_cover`
+- 页面与关联：`page_url`、`article_url`、`source_doc_id`、`download_location`
 
-## 上传前检查
+## 数据特点
 
-```powershell
-git status --short 1_data_handling/raw/image
-python -m json.tool 1_data_handling/raw/image/image_daily_coverage.json > $null
+- 当前共 `1461` 条记录，对应 `1461` 个自然日，一天一图
+- 覆盖 `2022-04-17` 至 `2026-04-16`
+- 当前来源统计：
+  - `gdelt_doc_socialimage`: `686`
+  - `nasa_gibs`: `429`
+  - `wikimedia`: `103`
+  - `copernicus_ogc`: `89`
+  - `unsplash`: `91`
+  - `pexels`: `63`
+
+## 数据流
+
+```text
+新闻图像 / 遥感 / 开放图库
+  -> collect_daily_image_dataset.py
+  -> image_manifest_commons_cleaned.jsonl.gz
+  -> thumbnails_webp/
+  -> 2_encoding_feature/image_clip
 ```

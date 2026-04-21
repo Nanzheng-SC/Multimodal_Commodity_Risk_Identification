@@ -37,11 +37,6 @@ Thumbs.db
 *.swp
 *.swo
 ~$*
-
-# Local cleanup artifacts
-cleanup_manual_delete_list.txt
-cleanup_manual_delete_list.json
-
 # Scratch outputs that are not part of the final deliverable
 3_modeling/results/_scratch/
 

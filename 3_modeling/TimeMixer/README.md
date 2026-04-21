@@ -1,16 +1,16 @@
-# TimeMixer GitHub 上传说明
+# TimeMixer 交付说明
 
-本目录上传 TimeMixer 主线源码、正式结果表和导出图表说明，不上传本地训练检查点。
+本目录保留 TimeMixer 主线源码、正式结果表和导出图表说明，不包含本地训练检查点。
 
-## 上传保留
+## 交付内容
 
 - TimeMixer 模型、实验入口和辅助脚本源码
 - 与正式主线对应的结果表和展示图
 
-## 本地生成或忽略
+## 本地重建或附加内容
 
-- `best_run/checkpoint.pth` 与 `best_run/checkpoints/` 不上传
-- 试验过程中的临时日志和调参缓存不上传
+- `best_run/checkpoint.pth` 与 `best_run/checkpoints/` 不纳入交付目录
+- 试验过程中的临时日志和调参缓存不纳入交付目录
 
 ## 本地重建入口
 
