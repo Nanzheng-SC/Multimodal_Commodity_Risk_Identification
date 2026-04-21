@@ -1,2 +1,1 @@
-"""Shared utilities for the FireFlower data and modeling pipeline."""
-
+"""Shared utilities for the data and modeling pipeline."""

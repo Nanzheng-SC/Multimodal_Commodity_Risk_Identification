@@ -5,13 +5,13 @@
 - rows: `1461`
 - columns: `15`
 - range: `2022-04-17` -> `2026-04-16`
-- path: `E:\Work\2025FireFlower\1_data_handling\raw\structured\structured_daily_merged.csv`
+- path: `1_data_handling/raw/structured/structured_daily_merged.csv`
 
 ### monthly_derived
 - rows: `49`
 - columns: `17`
 - range: `2022-04-30` -> `2026-04-16`
-- path: `E:\Work\2025FireFlower\1_data_handling\raw\structured\structured_monthly_derived.csv`
+- path: `1_data_handling/raw/structured/structured_monthly_derived.csv`
 
 ### registered_structured_fields
 | field | group | source | native_frequency | modeling_enabled |
@@ -48,7 +48,7 @@
 - rows: `8852`
 - columns: `25`
 - range: `2022-04-17` -> `2026-04-16`
-- path: `E:\Work\2025FireFlower\1_data_handling\raw\text\text_documents_multisource_cleaned.jsonl.gz`
+- path: `1_data_handling/raw/text/text_documents_multisource_cleaned.jsonl.gz`
 - covered_days: `1461` / `1461`
 - uncovered_days: `0`
 
@@ -56,7 +56,7 @@
 - rows: `1461`
 - columns: `35`
 - range: `2022-04-17` -> `2026-04-16`
-- path: `E:\Work\2025FireFlower\1_data_handling\raw\image\image_manifest_commons_cleaned.jsonl.gz`
+- path: `1_data_handling/raw/image/image_manifest_commons_cleaned.jsonl.gz`
 - covered_days: `1461` / `1461`
 - uncovered_days: `0`
 - source_counts: `{'wikimedia': 103, 'gdelt_doc_socialimage': 686, 'nasa_gibs': 429, 'copernicus_ogc': 89, 'unsplash': 91, 'pexels': 63}`
@@ -64,7 +64,7 @@
 ## Event
 - rows: `18`
 - range: `2022-07-27` -> `2025-06-03`
-- path: `E:\Work\2025FireFlower\1_data_handling\raw\event\event_manifest.jsonl`
+- path: `1_data_handling/raw/event/event_manifest.jsonl`
 
 ## Storage
 - text_archive_bytes: `1877905`

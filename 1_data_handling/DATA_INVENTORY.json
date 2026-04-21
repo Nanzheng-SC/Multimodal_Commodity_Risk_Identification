@@ -3,7 +3,7 @@
     "daily": {
       "dataset_name": "structured_daily",
       "exists": true,
-      "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\structured\\structured_daily_merged.csv",
+      "path": "1_data_handling/raw/structured/structured_daily_merged.csv",
       "row_count": 1461,
       "column_count": 15,
       "columns": [
@@ -72,7 +72,7 @@
     "monthly_derived": {
       "dataset_name": "structured_monthly_derived",
       "exists": true,
-      "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\structured\\structured_monthly_derived.csv",
+      "path": "1_data_handling/raw/structured/structured_monthly_derived.csv",
       "row_count": 49,
       "column_count": 17,
       "columns": [
@@ -473,7 +473,7 @@
     "documents": {
       "dataset_name": "text_documents_cleaned",
       "exists": true,
-      "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\text\\text_documents_multisource_cleaned.jsonl.gz",
+      "path": "1_data_handling/raw/text/text_documents_multisource_cleaned.jsonl.gz",
       "row_count": 8852,
       "column_count": 25,
       "columns": [
@@ -581,7 +581,7 @@
     "daily_coverage": {
       "dataset_name": "text_daily_coverage",
       "exists": true,
-      "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\text\\text_daily_coverage.json",
+      "path": "1_data_handling/raw/text/text_daily_coverage.json",
       "start_date": "2022-04-17",
       "end_date": "2026-04-16",
       "covered_days": 1461,
@@ -594,7 +594,7 @@
     "manifest": {
       "dataset_name": "image_manifest_cleaned",
       "exists": true,
-      "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\image\\image_manifest_commons_cleaned.jsonl.gz",
+      "path": "1_data_handling/raw/image/image_manifest_commons_cleaned.jsonl.gz",
       "row_count": 1461,
       "column_count": 35,
       "columns": [
@@ -722,7 +722,7 @@
     "daily_coverage": {
       "dataset_name": "image_daily_coverage",
       "exists": true,
-      "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\image\\image_daily_coverage.json",
+      "path": "1_data_handling/raw/image/image_daily_coverage.json",
       "start_date": "2022-04-17",
       "end_date": "2026-04-16",
       "covered_days": 1461,
@@ -733,7 +733,7 @@
     "collection_report": {
       "dataset_name": "image_collection_report",
       "exists": true,
-      "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\image\\image_collection_report.json",
+      "path": "1_data_handling/raw/image/image_collection_report.json",
       "source_counts": {
         "wikimedia": 103,
         "gdelt_doc_socialimage": 686,
@@ -769,7 +769,7 @@
   "event": {
     "dataset_name": "event_manifest",
     "exists": true,
-    "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\event\\event_manifest.jsonl",
+    "path": "1_data_handling/raw/event/event_manifest.jsonl",
     "row_count": 18,
     "column_count": 11,
     "columns": [
