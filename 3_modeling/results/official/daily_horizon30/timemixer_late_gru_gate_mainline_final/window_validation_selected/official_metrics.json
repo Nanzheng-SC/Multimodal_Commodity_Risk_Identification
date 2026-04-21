@@ -1,0 +1,44 @@
+{
+  "model": "TimeMixer",
+  "input_variant": "fusion",
+  "fusion_method": "late.gru_gate",
+  "selected_method": "late.gru_gate",
+  "frequency": "daily",
+  "target": "target_brent_avg_next_30d",
+  "target_mode": "residual",
+  "forecast_horizon_days": 30,
+  "deployment_mode": "validation_selected_family_diverse_config_ensemble",
+  "selection_rule": "final validation RMSE Top-3 with gate-family diversity; test is diagnostic only",
+  "selected_members": [
+    {
+      "candidate": "late_gru_gate_gate_bias_neg05_residual40_balanced_w120_mse_cal_none__seeds_3",
+      "family": "gate_neg05",
+      "window": "window_120",
+      "final_valid_rmse": 1.5070198624231583,
+      "diagnostic_test_rmse": 15.978243340677542
+    },
+    {
+      "candidate": "late_gru_gate_w90_lr5e4_mse_d64_drop10_m3_cal_bias__seeds_5",
+      "family": "canonical",
+      "window": "window_90",
+      "final_valid_rmse": 1.7289901168346622,
+      "diagnostic_test_rmse": 15.201821187990623
+    },
+    {
+      "candidate": "late_gru_gate_gate_bias0_residual60_textwide_w120_huber_cal_bias__seeds_3",
+      "family": "gate_residual60",
+      "window": "window_120",
+      "final_valid_rmse": 2.261350717067628,
+      "diagnostic_test_rmse": 15.251258172835845
+    }
+  ],
+  "deployed_run": {
+    "mode": "validation_selected_family_diverse_config_ensemble",
+    "final_valid_rmse": 1.8324535654418164,
+    "test_rmse": 15.470465802144203,
+    "test_mae": 12.241180327777776,
+    "test_mape": 0.12450622022313,
+    "direction_acc": 0.95
+  },
+  "diagnostics_status": "PASS"
+}

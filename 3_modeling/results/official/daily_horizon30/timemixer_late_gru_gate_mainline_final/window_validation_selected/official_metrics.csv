@@ -1,0 +1,2 @@
+model,frequency,input_variant,fusion_method,diagnostics_status,mode,final_valid_rmse,test_rmse,test_mae,test_mape,direction_acc
+TimeMixer,daily,fusion,late.gru_gate,PASS,validation_selected_family_diverse_config_ensemble,1.8324535654418164,15.470465802144203,12.241180327777776,0.12450622022313,0.95

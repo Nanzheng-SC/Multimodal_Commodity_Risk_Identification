@@ -1,0 +1,21 @@
+{
+  "status": "FAILED_DIAGNOSTIC",
+  "issues": [
+    "metrics are effectively identical to the naive reference baseline",
+    "validation RMSE does not beat the naive reference baseline"
+  ],
+  "checks": {
+    "prediction_std_gt_threshold": true,
+    "metrics_not_equal_naive_baseline": false,
+    "validation_beats_naive_baseline": false,
+    "test_not_worse_than_naive_baseline": true
+  },
+  "best_run_prediction_std": 11.812538146972656,
+  "best_run_prediction_mean": 76.71800231933594,
+  "naive_baseline_val_rmse": 2.7570673554570364,
+  "naive_baseline_test_rmse": 16.238835181945973,
+  "model_val_rmse": 2.7570673554570364,
+  "model_test_rmse": 16.238835181945973,
+  "aggregate_val_rmse_mean": null,
+  "aggregate_test_rmse_mean": null
+}

@@ -1,0 +1,9 @@
+{
+  "deployment_mode": "ensemble",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "input_variant": "image"
+}

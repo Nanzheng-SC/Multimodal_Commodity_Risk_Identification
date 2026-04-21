@@ -1,0 +1,59 @@
+# Local Python environments
+venv/
+.venv/
+env/
+ENV/
+.env
+
+
+# Local model weights that should be restored by download scripts, not committed
+2_encoding_feature/text_bert/models/**/model.safetensors
+2_encoding_feature/text_bert/models/**/pytorch_model.bin
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Editor and local workspace metadata
+.vscode/
+.trae/
+.idea/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Local temp and lock-style files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+~$*
+
+# Local cleanup artifacts
+cleanup_manual_delete_list.txt
+cleanup_manual_delete_list.json
+
+# Scratch outputs that are not part of the final deliverable
+3_modeling/results/_scratch/
+
+# Large generated encoding outputs should be rebuilt locally
+2_encoding_feature/outputs/
+
+# Training checkpoints are local artifacts and should not be committed
+3_modeling/results/official/**/best_run/checkpoint.pth
+3_modeling/results/official/**/best_run/checkpoints/
+
+# Local documents and reference materials
+0_docs/
+
+# Local data collection and maintenance scripts excluded from packaged deliverables
+1_data_handling/_collection_scripts/

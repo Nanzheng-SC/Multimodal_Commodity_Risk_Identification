@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "issues": [],
+  "checks": {
+    "prediction_std_gt_threshold": true,
+    "metrics_not_equal_naive_baseline": true,
+    "validation_beats_naive_baseline": true,
+    "test_not_worse_than_naive_baseline": true
+  },
+  "best_run_prediction_std": 11.641989707946777,
+  "best_run_prediction_mean": 77.25466918945312,
+  "naive_baseline_val_rmse": 2.7570673554570364,
+  "naive_baseline_test_rmse": 16.238835181945973,
+  "model_val_rmse": 2.3426814377256995,
+  "model_test_rmse": 15.870248639202764,
+  "aggregate_val_rmse_mean": 2.394503602117263,
+  "aggregate_test_rmse_mean": 15.880632423056282
+}

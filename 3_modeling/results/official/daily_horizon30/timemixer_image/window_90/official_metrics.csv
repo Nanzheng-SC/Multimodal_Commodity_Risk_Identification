@@ -1,0 +1,2 @@
+model,frequency,input_variant,fusion_method,window_length,selection_metric,deployment_mode,final_valid_rmse_mean,final_valid_rmse_std,test_rmse_mean,test_rmse_std,deployed_final_valid_rmse,deployed_test_rmse,deployed_test_mae,deployed_test_mape,diagnostics_status
+TimeMixer,daily,image,,90,forecast_priority_shortlist,ensemble,2.394503602117263,0.2223169182054858,15.880632423056282,0.20274235037493882,2.3426814377256995,15.870248639202764,12.565150260925293,0.1276310384273529,PASS

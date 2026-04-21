@@ -1,0 +1,2 @@
+model,diagnostics_status,seed,rolling_val_rmse_mean,rolling_val_rmse_std,final_valid_rmse,final_valid_mae,final_valid_mape,final_valid_direction_acc,test_rmse,test_mae,test_mape,test_direction_acc,best_epoch_final
+LSTM-residual,FAILED_DIAGNOSTIC,42,2.443331044092429,0.30760582420810806,2.1124928355800874,1.498191475868225,0.022446682676672935,0.75,19.43599741730454,16.325864791870117,0.16781085729599,0.05,12

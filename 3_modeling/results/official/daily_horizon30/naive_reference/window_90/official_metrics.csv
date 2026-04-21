@@ -1,0 +1,2 @@
+model,diagnostics_status,deployed_final_valid_rmse,deployed_test_rmse,deployed_test_mae
+Naive-reference,BASELINE,2.7570673554570364,16.238835181945973,12.986078262329102

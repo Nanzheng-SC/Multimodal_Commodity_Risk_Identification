@@ -1,0 +1,91 @@
+{
+  "model": "HAR-no-leak-residual",
+  "input_variant": "fusion",
+  "fusion_method": "late.gru_gate",
+  "window_length": 30,
+  "input_dim": 3,
+  "frequency": "daily",
+  "target": "target_brent_avg_next_30d",
+  "forecast_horizon_days": 30,
+  "target_mode": "residual",
+  "feature_lag_days": 30,
+  "seed_list": [
+    42,
+    43,
+    44
+  ],
+  "selection_metric": "final_valid_rmse",
+  "aggregate_metrics": {
+    "rolling_validation": {},
+    "final_valid": {
+      "direction_acc_mean": 0.3333333333333333,
+      "direction_acc_std": 0.0,
+      "mae_mean": 2.4234910011291504,
+      "mae_std": 0.0,
+      "mape_mean": 0.036713775247335434,
+      "mape_std": 0.0,
+      "mse_mean": 9.586465835571289,
+      "mse_std": 0.0,
+      "rmse_mean": 3.096201840250614,
+      "rmse_std": 0.0
+    },
+    "test": {
+      "direction_acc_mean": 0.05000000000000001,
+      "direction_acc_std": 6.938893903907228e-18,
+      "mae_mean": 13.798367500305176,
+      "mae_std": 0.0,
+      "mape_mean": 0.1414545178413391,
+      "mape_std": 0.0,
+      "mse_mean": 289.4421691894531,
+      "mse_std": 0.0,
+      "rmse_mean": 17.013000005567893,
+      "rmse_std": 0.0
+    }
+  },
+  "deployed_run": {
+    "seed": 42,
+    "final_valid_rmse": 3.096201840250614,
+    "final_valid_mae": 2.4234910011291504,
+    "final_valid_mape": 0.036713775247335434,
+    "test_rmse": 17.013000005567893,
+    "test_mae": 13.798367500305176,
+    "test_mape": 0.1414545178413391
+  },
+  "baseline_zero": {
+    "rolling_validation": {
+      "direction_acc_mean": 0.0,
+      "direction_acc_std": 0.0,
+      "mae_mean": 1.769831617673238,
+      "mae_std": 0.4213209353518106,
+      "mape_mean": 0.02692723584671815,
+      "mape_std": 0.006725065997331825,
+      "mse_mean": 5.621862729390462,
+      "mse_std": 1.7986894678166163,
+      "rmse_mean": 2.3373741521797116,
+      "rmse_std": 0.39817684778580165
+    },
+    "final_valid": {
+      "mse": 7.6014204025268555,
+      "rmse": 2.7570673554570364,
+      "mae": 2.219010829925537,
+      "mape": 0.03374866023659706,
+      "direction_acc": 0.0
+    },
+    "final_test": {
+      "mse": 263.69976806640625,
+      "rmse": 16.238835181945973,
+      "mae": 12.986078262329102,
+      "mape": 0.13254112005233765,
+      "direction_acc": 0.0
+    }
+  },
+  "diagnostics_status": "FAILED_DIAGNOSTIC",
+  "config": {
+    "history_windows": [
+      1,
+      7,
+      30
+    ],
+    "no_leak_lag_days": 30
+  }
+}

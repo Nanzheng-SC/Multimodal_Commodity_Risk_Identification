@@ -1,0 +1,43 @@
+{
+  "start_date": "2022-04-17",
+  "end_date": "2026-04-16",
+  "source_status": {
+    "unsplash": "enabled",
+    "pexels": "enabled",
+    "copernicus": "enabled",
+    "gdelt_doc_socialimage": "enabled",
+    "wayback": "enabled",
+    "nasa_gibs": "enabled",
+    "wikimedia": "enabled"
+  },
+  "source_counts": {
+    "wikimedia": 103,
+    "gdelt_doc_socialimage": 686,
+    "nasa_gibs": 429,
+    "copernicus_ogc": 89,
+    "unsplash": 91,
+    "pexels": 63
+  },
+  "notes": [],
+  "source_type_counts": {
+    "commons": 103,
+    "news_image": 686,
+    "satellite_image": 518,
+    "stock_photo": 154
+  },
+  "record_count": 1461,
+  "coverage": {
+    "covered_days": 1461,
+    "total_days": 1461,
+    "uncovered_days": 0
+  },
+  "storage": {
+    "manifest_bytes": 316787,
+    "coverage_json_bytes": 573420,
+    "thumbnail_file_count": 1461,
+    "thumbnail_total_bytes": 40952974
+  },
+  "finalized_at_utc": "2026-04-16T16:52:53+00:00",
+  "policy": "verified_external_source_coverage",
+  "created_at_utc": "2026-04-16T15:47:52+00:00"
+}

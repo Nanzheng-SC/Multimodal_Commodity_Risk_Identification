@@ -1,0 +1,22 @@
+{
+  "window_length": 90,
+  "input_variant": "structured",
+  "input_window_start": "2026-01-17",
+  "input_window_end": "2026-04-16",
+  "predicted_value": 123.27999877929688,
+  "member_predictions": [
+    123.27999877929688,
+    123.27999877929688,
+    123.27999877929688
+  ],
+  "deployment_mode": "ensemble",
+  "fusion_method": null,
+  "target_mode": "residual",
+  "model": "TimeMixer",
+  "frequency": "daily",
+  "forecast_horizon_days": 30,
+  "anchor": "2026-04-16",
+  "forecast_start_date": "2026-04-17",
+  "forecast_end_date": "2026-05-16",
+  "forecast_label": "2026-04-17 to 2026-05-16"
+}

@@ -1,0 +1,819 @@
+{
+  "structured": {
+    "daily": {
+      "dataset_name": "structured_daily",
+      "exists": true,
+      "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\structured\\structured_daily_merged.csv",
+      "row_count": 1461,
+      "column_count": 15,
+      "columns": [
+        "date",
+        "Brent",
+        "WTI",
+        "USD_Index",
+        "EPU",
+        "GPR",
+        "UAH_per_USD",
+        "RUB_per_USD",
+        "AED_per_USD",
+        "reference_brent",
+        "brent_step_return",
+        "brent_step_volatility_7",
+        "market_closed_flag",
+        "target_brent_avg_next_7d",
+        "target_brent_day7"
+      ],
+      "field_groups": {
+        "price_benchmarks": [
+          "Brent",
+          "WTI"
+        ],
+        "macro_fx_uncertainty": [
+          "USD_Index",
+          "EPU",
+          "GPR",
+          "UAH_per_USD",
+          "RUB_per_USD",
+          "AED_per_USD"
+        ],
+        "derived_features": [
+          "reference_brent",
+          "brent_step_return",
+          "brent_step_volatility_7",
+          "market_closed_flag"
+        ],
+        "labels": [
+          "target_brent_avg_next_7d",
+          "target_brent_day7"
+        ]
+      },
+      "date_min": "2022-04-17",
+      "date_max": "2026-04-16",
+      "duplicate_index_count": 0,
+      "missing_rate": {
+        "date": 0.0,
+        "Brent": 0.0,
+        "WTI": 0.0,
+        "USD_Index": 0.0,
+        "EPU": 0.0,
+        "GPR": 0.0,
+        "UAH_per_USD": 0.0,
+        "RUB_per_USD": 0.0,
+        "AED_per_USD": 0.0,
+        "reference_brent": 0.0,
+        "brent_step_return": 0.0,
+        "brent_step_volatility_7": 0.0,
+        "market_closed_flag": 0.0,
+        "target_brent_avg_next_7d": 0.004791238877481177,
+        "target_brent_day7": 0.004791238877481177
+      },
+      "file_size_bytes": 204446
+    },
+    "monthly_derived": {
+      "dataset_name": "structured_monthly_derived",
+      "exists": true,
+      "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\structured\\structured_monthly_derived.csv",
+      "row_count": 49,
+      "column_count": 17,
+      "columns": [
+        "month",
+        "month_end_date",
+        "date",
+        "Brent",
+        "WTI",
+        "USD_Index",
+        "EPU",
+        "GPR",
+        "UAH_per_USD",
+        "RUB_per_USD",
+        "AED_per_USD",
+        "reference_brent",
+        "brent_step_return",
+        "brent_step_volatility_7",
+        "market_closed_flag",
+        "target_brent_avg_next_7d",
+        "target_brent_day7"
+      ],
+      "field_groups": {
+        "price_benchmarks": [
+          "Brent",
+          "WTI"
+        ],
+        "macro_fx_uncertainty": [
+          "USD_Index",
+          "EPU",
+          "GPR",
+          "UAH_per_USD",
+          "RUB_per_USD",
+          "AED_per_USD"
+        ],
+        "derived_features": [
+          "reference_brent",
+          "brent_step_return",
+          "brent_step_volatility_7",
+          "market_closed_flag"
+        ],
+        "labels": [
+          "target_brent_avg_next_7d",
+          "target_brent_day7"
+        ]
+      },
+      "date_min": "2022-04-30",
+      "date_max": "2026-04-16",
+      "duplicate_index_count": 0,
+      "missing_rate": {
+        "month": 0.0,
+        "month_end_date": 0.0,
+        "date": 0.0,
+        "Brent": 0.0,
+        "WTI": 0.0,
+        "USD_Index": 0.0,
+        "EPU": 0.0,
+        "GPR": 0.0,
+        "UAH_per_USD": 0.0,
+        "RUB_per_USD": 0.0,
+        "AED_per_USD": 0.0,
+        "reference_brent": 0.0,
+        "brent_step_return": 0.0,
+        "brent_step_volatility_7": 0.0,
+        "market_closed_flag": 0.0,
+        "target_brent_avg_next_7d": 0.02040816326530612,
+        "target_brent_day7": 0.02040816326530612
+      },
+      "file_size_bytes": 7973
+    },
+    "registered_structured_fields": [
+      {
+        "name": "Brent",
+        "group": "price_benchmarks",
+        "source": "FRED",
+        "native_frequency": "daily",
+        "fetch_method": "fred_series",
+        "daily_fill_rule": "ffill_non_trading_days",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "",
+        "series_id": "DCOILBRENTEU"
+      },
+      {
+        "name": "WTI",
+        "group": "price_benchmarks",
+        "source": "FRED",
+        "native_frequency": "daily",
+        "fetch_method": "fred_series",
+        "daily_fill_rule": "ffill_non_trading_days",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "",
+        "series_id": "DCOILWTICO"
+      },
+      {
+        "name": "USD_Index",
+        "group": "macro_fx_uncertainty",
+        "source": "FRED",
+        "native_frequency": "daily",
+        "fetch_method": "fred_series",
+        "daily_fill_rule": "ffill_non_trading_days",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "",
+        "series_id": "DTWEXBGS"
+      },
+      {
+        "name": "EPU",
+        "group": "macro_fx_uncertainty",
+        "source": "FRED",
+        "native_frequency": "daily_7day",
+        "fetch_method": "fred_series",
+        "daily_fill_rule": "ffill_non_trading_days",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "",
+        "series_id": "USEPUINDXD"
+      },
+      {
+        "name": "GPR",
+        "group": "macro_fx_uncertainty",
+        "source": "Iacoviello_GPR",
+        "native_frequency": "daily",
+        "fetch_method": "official_stata_download",
+        "daily_fill_rule": "ffill_non_publication_days",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "Daily geopolitical risk series from the official GPR daily export.",
+        "series_id": null
+      },
+      {
+        "name": "UAH_per_USD",
+        "group": "macro_fx_uncertainty",
+        "source": "NBU",
+        "native_frequency": "daily",
+        "fetch_method": "nbu_exchange_site_json",
+        "daily_fill_rule": "ffill_holidays_and_weekends",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "",
+        "series_id": null
+      },
+      {
+        "name": "RUB_per_USD",
+        "group": "macro_fx_uncertainty",
+        "source": "CBR",
+        "native_frequency": "daily",
+        "fetch_method": "cbr_xml_dynamic",
+        "daily_fill_rule": "ffill_holidays_and_weekends",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "",
+        "series_id": null
+      },
+      {
+        "name": "AED_per_USD",
+        "group": "macro_fx_uncertainty",
+        "source": "CBUAE_USD_peg",
+        "native_frequency": "daily",
+        "fetch_method": "official_constant_series",
+        "daily_fill_rule": "constant",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": false,
+        "notes": "Official AED/USD peg represented as a daily constant series.",
+        "series_id": null
+      },
+      {
+        "name": "reference_brent",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "daily",
+        "fetch_method": "copy_from_brent",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": false,
+        "notes": "",
+        "series_id": null
+      },
+      {
+        "name": "brent_step_return",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "daily",
+        "fetch_method": "pct_change_from_brent",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "",
+        "series_id": null
+      },
+      {
+        "name": "brent_step_volatility_7",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "daily",
+        "fetch_method": "rolling_std_from_brent_return",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "",
+        "series_id": null
+      },
+      {
+        "name": "brent_return_3d",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "historical_daily",
+        "fetch_method": "pct_change_from_brent_3d",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "Historical Brent 3-day return; uses current and past prices only.",
+        "series_id": null
+      },
+      {
+        "name": "brent_return_7d",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "historical_daily",
+        "fetch_method": "pct_change_from_brent_7d",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "Historical Brent 7-day return; uses current and past prices only.",
+        "series_id": null
+      },
+      {
+        "name": "brent_return_14d",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "historical_daily",
+        "fetch_method": "pct_change_from_brent_14d",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "Historical Brent 14-day return; uses current and past prices only.",
+        "series_id": null
+      },
+      {
+        "name": "brent_return_30d",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "historical_daily",
+        "fetch_method": "pct_change_from_brent_30d",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "Historical Brent 30-day return; uses current and past prices only.",
+        "series_id": null
+      },
+      {
+        "name": "brent_volatility_14d",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "historical_daily",
+        "fetch_method": "rolling_std_from_brent_return_14d",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "Historical 14-day Brent return volatility.",
+        "series_id": null
+      },
+      {
+        "name": "brent_volatility_30d",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "historical_daily",
+        "fetch_method": "rolling_std_from_brent_return_30d",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "Historical 30-day Brent return volatility.",
+        "series_id": null
+      },
+      {
+        "name": "wti_brent_spread",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "daily",
+        "fetch_method": "wti_minus_brent",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "",
+        "series_id": null
+      },
+      {
+        "name": "usd_index_return_7d",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "historical_daily",
+        "fetch_method": "pct_change_from_usd_index_7d",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "",
+        "series_id": null
+      },
+      {
+        "name": "gpr_change_7d",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "historical_daily",
+        "fetch_method": "change_from_gpr_7d",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "",
+        "series_id": null
+      },
+      {
+        "name": "epu_change_7d",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "historical_daily",
+        "fetch_method": "change_from_epu_7d",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "",
+        "series_id": null
+      },
+      {
+        "name": "brent_zscore_30d",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "historical_daily",
+        "fetch_method": "rolling_zscore_from_brent_30d",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "",
+        "series_id": null
+      },
+      {
+        "name": "high_volatility_regime",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "historical_daily",
+        "fetch_method": "rolling_volatility_quantile_flag",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "One when historical 30-day Brent volatility is in the high-volatility regime.",
+        "series_id": null
+      },
+      {
+        "name": "fast_uptrend_regime",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "historical_daily",
+        "fetch_method": "uptrend_quantile_flag",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": true,
+        "notes": "One when historical 14-day Brent return indicates a fast uptrend.",
+        "series_id": null
+      },
+      {
+        "name": "market_closed_flag",
+        "group": "derived_features",
+        "source": "derived",
+        "native_frequency": "daily",
+        "fetch_method": "market_holiday_detector",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_last",
+        "modeling_enabled": false,
+        "notes": "",
+        "series_id": null
+      },
+      {
+        "name": "target_brent_avg_next_7d",
+        "group": "labels",
+        "source": "derived",
+        "native_frequency": "daily",
+        "fetch_method": "forward_7d_average",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_anchor_forward_7d_average",
+        "modeling_enabled": false,
+        "notes": "",
+        "series_id": null
+      },
+      {
+        "name": "target_brent_day7",
+        "group": "labels",
+        "source": "derived",
+        "native_frequency": "daily",
+        "fetch_method": "forward_day7_value",
+        "daily_fill_rule": "same_day",
+        "monthly_resample_rule": "month_end_anchor_day7_value",
+        "modeling_enabled": false,
+        "notes": "",
+        "series_id": null
+      }
+    ]
+  },
+  "text": {
+    "documents": {
+      "dataset_name": "text_documents_cleaned",
+      "exists": true,
+      "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\text\\text_documents_multisource_cleaned.jsonl.gz",
+      "row_count": 8852,
+      "column_count": 25,
+      "columns": [
+        "body_char_count",
+        "canonical_url",
+        "content_quality",
+        "content_storage",
+        "date",
+        "doc_id",
+        "domain",
+        "has_summary",
+        "has_text",
+        "image_url_hint",
+        "language",
+        "open_source",
+        "query_bucket",
+        "search_query",
+        "social_image_url",
+        "source_country",
+        "source_name",
+        "source_type",
+        "summary",
+        "text",
+        "title",
+        "topic_bucket",
+        "topic_tags",
+        "url",
+        "year_month"
+      ],
+      "date_min": "2022-04-17",
+      "date_max": "2026-04-16",
+      "dedup_key": "canonical_url",
+      "duplicate_key_count": 9,
+      "top_sources": [
+        [
+          "fxstreet.com",
+          292
+        ],
+        [
+          "marketscreener.com",
+          270
+        ],
+        [
+          "seekingalpha.com",
+          194
+        ],
+        [
+          "economictimes.indiatimes.com",
+          193
+        ],
+        [
+          "thehindubusinessline.com",
+          185
+        ],
+        [
+          "finance.yahoo.com",
+          147
+        ],
+        [
+          "menafn.com",
+          145
+        ],
+        [
+          "interfax.ru",
+          141
+        ],
+        [
+          "oilprice.com",
+          134
+        ],
+        [
+          "livemint.com",
+          99
+        ]
+      ],
+      "missing_rate": {
+        "body_char_count": 0.0,
+        "canonical_url": 0.0,
+        "content_quality": 0.0,
+        "content_storage": 0.0,
+        "date": 0.0,
+        "doc_id": 0.0,
+        "domain": 0.0,
+        "has_summary": 0.0,
+        "has_text": 0.0,
+        "image_url_hint": 0.03705377315860822,
+        "language": 0.0,
+        "open_source": 0.0,
+        "query_bucket": 0.0,
+        "search_query": 0.0,
+        "social_image_url": 0.03705377315860822,
+        "source_country": 0.04970628106642567,
+        "source_name": 0.0,
+        "source_type": 0.0,
+        "summary": 0.0,
+        "text": 0.9978535924084952,
+        "title": 0.0,
+        "topic_bucket": 0.0,
+        "topic_tags": 0.0,
+        "url": 0.0,
+        "year_month": 0.0
+      },
+      "file_size_bytes": 1877905
+    },
+    "daily_coverage": {
+      "dataset_name": "text_daily_coverage",
+      "exists": true,
+      "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\text\\text_daily_coverage.json",
+      "start_date": "2022-04-17",
+      "end_date": "2026-04-16",
+      "covered_days": 1461,
+      "uncovered_days": 0,
+      "total_days": 1461,
+      "record_count": 8852
+    }
+  },
+  "image": {
+    "manifest": {
+      "dataset_name": "image_manifest_cleaned",
+      "exists": true,
+      "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\image\\image_manifest_commons_cleaned.jsonl.gz",
+      "row_count": 1461,
+      "column_count": 35,
+      "columns": [
+        "article_url",
+        "artist",
+        "bbox",
+        "cloud_cover",
+        "collection_status",
+        "content_storage",
+        "country_focus",
+        "credit",
+        "date",
+        "description",
+        "domain",
+        "download_location",
+        "height",
+        "image_id",
+        "image_url",
+        "lang",
+        "license_short",
+        "license_url",
+        "local_path",
+        "mime",
+        "open_source",
+        "page_url",
+        "published_at",
+        "query_keyword",
+        "roi_name",
+        "scene_tags",
+        "source_doc_id",
+        "source_name",
+        "source_stream",
+        "source_type",
+        "thumbnail_mime",
+        "thumbnail_path",
+        "title",
+        "width",
+        "year_month"
+      ],
+      "date_min": "2022-04-17",
+      "date_max": "2026-04-16",
+      "dedup_key": "image_id",
+      "duplicate_key_count": 0,
+      "top_sources": [
+        [
+          "NASA GIBS",
+          429
+        ],
+        [
+          "fxstreet.com",
+          117
+        ],
+        [
+          "Wikimedia Commons",
+          103
+        ],
+        [
+          "Unsplash",
+          91
+        ],
+        [
+          "Copernicus Data Space OGC",
+          89
+        ],
+        [
+          "Pexels",
+          63
+        ],
+        [
+          "economictimes.indiatimes.com",
+          51
+        ],
+        [
+          "dailyfx.com",
+          47
+        ],
+        [
+          "oilprice.com",
+          30
+        ],
+        [
+          "menafn.com",
+          28
+        ]
+      ],
+      "missing_rate": {
+        "article_url": 0.07049965776865161,
+        "artist": 0.8240930869267625,
+        "bbox": 0.6454483230663929,
+        "cloud_cover": 0.6454483230663929,
+        "collection_status": 0.0,
+        "content_storage": 0.0,
+        "country_focus": 0.5318275154004107,
+        "credit": 0.0,
+        "date": 0.0,
+        "description": 0.0,
+        "domain": 0.0,
+        "download_location": 0.9377138945927447,
+        "height": 0.0,
+        "image_id": 0.0,
+        "image_url": 0.0,
+        "lang": 0.5304585900068446,
+        "license_short": 0.8240930869267625,
+        "license_url": 0.8295687885010267,
+        "local_path": 1.0,
+        "mime": 0.0,
+        "open_source": 0.0,
+        "page_url": 0.07049965776865161,
+        "published_at": 0.0,
+        "query_keyword": 0.0,
+        "roi_name": 0.6454483230663929,
+        "scene_tags": 0.0,
+        "source_doc_id": 0.5304585900068446,
+        "source_name": 0.0,
+        "source_stream": 0.0,
+        "source_type": 0.0,
+        "thumbnail_mime": 0.0,
+        "thumbnail_path": 0.0,
+        "title": 0.0,
+        "width": 0.0,
+        "year_month": 0.0
+      },
+      "file_size_bytes": 309900
+    },
+    "daily_coverage": {
+      "dataset_name": "image_daily_coverage",
+      "exists": true,
+      "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\image\\image_daily_coverage.json",
+      "start_date": "2022-04-17",
+      "end_date": "2026-04-16",
+      "covered_days": 1461,
+      "uncovered_days": 0,
+      "total_days": 1461,
+      "record_count": 1461
+    },
+    "collection_report": {
+      "dataset_name": "image_collection_report",
+      "exists": true,
+      "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\image\\image_collection_report.json",
+      "source_counts": {
+        "wikimedia": 103,
+        "gdelt_doc_socialimage": 686,
+        "nasa_gibs": 429,
+        "copernicus_ogc": 89,
+        "unsplash": 91,
+        "pexels": 63
+      },
+      "source_type_counts": {
+        "commons": 103,
+        "news_image": 686,
+        "satellite_image": 518,
+        "stock_photo": 154
+      },
+      "source_status": {
+        "unsplash": "enabled",
+        "pexels": "enabled",
+        "copernicus": "enabled",
+        "gdelt_doc_socialimage": "enabled",
+        "wayback": "enabled",
+        "nasa_gibs": "enabled",
+        "wikimedia": "enabled"
+      },
+      "storage": {
+        "manifest_bytes": 316787,
+        "coverage_json_bytes": 573420,
+        "thumbnail_file_count": 1461,
+        "thumbnail_total_bytes": 40952974
+      },
+      "file_size_bytes": 1064
+    }
+  },
+  "event": {
+    "dataset_name": "event_manifest",
+    "exists": true,
+    "path": "E:\\Work\\2025FireFlower\\1_data_handling\\raw\\event\\event_manifest.jsonl",
+    "row_count": 18,
+    "column_count": 11,
+    "columns": [
+      "country_focus",
+      "date",
+      "event_id",
+      "event_tags",
+      "notes",
+      "source_name",
+      "source_type",
+      "text",
+      "title",
+      "url",
+      "year_month"
+    ],
+    "date_min": "2022-07-27",
+    "date_max": "2025-06-03",
+    "dedup_key": "event_id",
+    "duplicate_key_count": 0,
+    "top_sources": [
+      [
+        "Wikipedia",
+        18
+      ]
+    ],
+    "missing_rate": {
+      "country_focus": 0.0,
+      "date": 0.0,
+      "event_id": 0.0,
+      "event_tags": 0.0,
+      "notes": 0.0,
+      "source_name": 0.0,
+      "source_type": 0.0,
+      "text": 1.0,
+      "title": 0.0,
+      "url": 0.0,
+      "year_month": 0.0
+    },
+    "file_size_bytes": 7222
+  },
+  "storage": {
+    "text_archive_bytes": 1877905,
+    "image_manifest_bytes": 309900,
+    "thumbnail_file_count": 1461,
+    "thumbnail_total_bytes": 40952974
+  }
+}

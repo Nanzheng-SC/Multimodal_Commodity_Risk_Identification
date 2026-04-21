@@ -1,0 +1,137 @@
+{
+  "model": "TimeMixer",
+  "input_variant": "structured",
+  "fusion_method": null,
+  "window_length": 90,
+  "input_dim": 9,
+  "frequency": "daily",
+  "target": "target_brent_avg_next_30d",
+  "forecast_horizon_days": 30,
+  "device": "cuda",
+  "time_series_root": "2_encoding_feature/outputs/daily/time_series_horizon30/structured",
+  "split_strategy": "rolling_origin",
+  "seed_list": [
+    42,
+    43,
+    44
+  ],
+  "selection_metric": "forecast_priority_shortlist",
+  "stability_reference": "rolling_validation_rmse_mean",
+  "deployment_mode": "ensemble",
+  "timemixer_config": {
+    "batch_size": 16,
+    "max_epochs": 40,
+    "patience": 8,
+    "learning_rate": 0.0005,
+    "weight_decay": 0.0001,
+    "loss": "mse",
+    "huber_delta": 0.02,
+    "loss_weight_alpha": 2.0,
+    "target_mode": "residual",
+    "target_transform": "none",
+    "forecast_horizon_days": 30,
+    "grad_clip": 1.0,
+    "d_model": 64,
+    "n_heads": 4,
+    "e_layers": 2,
+    "d_ff": 128,
+    "dropout": 0.1,
+    "down_sampling_layers": 3,
+    "down_sampling_window": 2,
+    "down_sampling_method": "avg",
+    "decomp_method": "moving_avg",
+    "moving_avg": 3,
+    "top_k": 3,
+    "use_norm": 1,
+    "use_future_temporal_feature": 0,
+    "channel_independence": 0,
+    "embed": "timeF",
+    "freq": "d",
+    "deployment_mode": "ensemble",
+    "residual_head": false,
+    "residual_hidden_dim": 64,
+    "positive_output": false
+  },
+  "aggregate_metrics": {
+    "rolling_validation": {
+      "direction_acc_mean": 0.0,
+      "direction_acc_std": 0.0,
+      "mae_mean": 1.769831617673238,
+      "mae_std": 0.0,
+      "mape_mean": 0.02692723584671815,
+      "mape_std": 0.0,
+      "mse_mean": 5.621862729390462,
+      "mse_std": 0.0,
+      "rmse_mean": 2.3373741521797116,
+      "rmse_std": 0.0
+    },
+    "final_valid": {
+      "direction_acc_mean": 0.0,
+      "direction_acc_std": 0.0,
+      "mae_mean": 2.219010829925537,
+      "mae_std": 0.0,
+      "mape_mean": 0.03374866023659706,
+      "mape_std": 0.0,
+      "mse_mean": 7.6014204025268555,
+      "mse_std": 0.0,
+      "rmse_mean": 2.757067355457037,
+      "rmse_std": 4.440892098500626e-16
+    },
+    "test": {
+      "direction_acc_mean": 0.0,
+      "direction_acc_std": 0.0,
+      "mae_mean": 12.986078262329102,
+      "mae_std": 0.0,
+      "mape_mean": 0.13254112005233765,
+      "mape_std": 0.0,
+      "mse_mean": 263.69976806640625,
+      "mse_std": 0.0,
+      "rmse_mean": 16.238835181945973,
+      "rmse_std": 0.0
+    }
+  },
+  "deployed_run": {
+    "mode": "ensemble",
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "final_valid_rmse": 2.7570679607849646,
+    "final_valid_mae": 2.219011068344116,
+    "final_valid_mape": 0.03374866768717766,
+    "test_rmse": 16.238835181945973,
+    "test_mae": 12.986078262329102,
+    "test_mape": 0.13254112005233765,
+    "reference_best_seed": 42
+  },
+  "baseline_zero": {
+    "rolling_validation": {
+      "direction_acc_mean": 0.0,
+      "direction_acc_std": 0.0,
+      "mae_mean": 1.769831617673238,
+      "mae_std": 0.4213209353518106,
+      "mape_mean": 0.02692723584671815,
+      "mape_std": 0.006725065997331825,
+      "mse_mean": 5.621862729390462,
+      "mse_std": 1.7986894678166163,
+      "rmse_mean": 2.3373741521797116,
+      "rmse_std": 0.39817684778580165
+    },
+    "final_valid": {
+      "mse": 7.6014204025268555,
+      "rmse": 2.7570673554570364,
+      "mae": 2.219010829925537,
+      "mape": 0.03374866023659706,
+      "direction_acc": 0.0
+    },
+    "final_test": {
+      "mse": 263.69976806640625,
+      "rmse": 16.238835181945973,
+      "mae": 12.986078262329102,
+      "mape": 0.13254112005233765,
+      "direction_acc": 0.0
+    }
+  },
+  "diagnostics_status": "FAILED_DIAGNOSTIC"
+}
