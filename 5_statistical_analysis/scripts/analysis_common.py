@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import gzip
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any, Iterable
@@ -22,9 +23,11 @@ for path in (PROJECT_ROOT, MODELING_ROOT):
 from common.metrics import metric_dict  # noqa: E402
 from project_shared.paths import (  # noqa: E402
     EVENT_MANIFEST_PATH,
+    IMAGE_MANIFEST_CLEANED_GZ_PATH,
     IMAGE_DAILY_COVERAGE_CSV_PATH,
     STRUCTURED_DAILY_PATH,
     TEXT_DAILY_COVERAGE_CSV_PATH,
+    TEXT_DOCUMENTS_CLEANED_GZ_PATH,
 )
 from project_shared.targets import REFERENCE_PRICE_COLUMN, compute_forward_average  # noqa: E402
 
@@ -35,7 +38,8 @@ TABLE_DIR = OUTPUT_DIR / "tables"
 FIGURE_DIR = OUTPUT_DIR / "figures"
 EXPORT_ROOT = MODELING_ROOT / "results" / "export" / "daily_horizon30_late_gru_gate_mainline_final"
 OFFICIAL_ROOT = MODELING_ROOT / "results" / "official" / "daily_horizon30"
-ARIMA_ROOT = OFFICIAL_ROOT / "arima_residual" / "window_90"
+EXPORT_SUMMARY_PATH = EXPORT_ROOT / "EXPORT_SUMMARY.json"
+ARIMA_FAMILY_ROOT = OFFICIAL_ROOT / "arima_residual"
 HORIZON_DAYS = 30
 MAINLINE_RUN_ID = "late_gru_gate_validation_selected_top2"
 
@@ -76,6 +80,62 @@ def project_relative(path: Path) -> str:
         return str(path.resolve().relative_to(PROJECT_ROOT)).replace("\\", "/")
     except ValueError:
         return str(path)
+
+
+def resolve_project_path(value: str | Path | None) -> Path | None:
+    if value is None:
+        return None
+    path = Path(value)
+    if path.is_absolute():
+        return path
+    return PROJECT_ROOT / path
+
+
+def read_json(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def is_arima_metrics_file(path: Path) -> bool:
+    payload = read_json(path)
+    names = {
+        str(payload.get("model", "")),
+        str(payload.get("display_name", "")),
+        str((payload.get("rolling_metrics") or {}).get("model", "")),
+    }
+    return any("ARIMA" in name.upper() for name in names)
+
+
+def discover_arima_root() -> Path:
+    env_path = resolve_project_path(os.environ.get("STAT_ANALYSIS_ARIMA_ROOT"))
+    if env_path and (env_path / "rolling_predictions.csv").exists():
+        return env_path
+
+    summary = read_json(EXPORT_SUMMARY_PATH)
+    for key_path in (
+        (summary.get("export_files") or {}).get("arima_official_dir"),
+        (summary.get("arima_baseline") or {}).get("official_dir"),
+    ):
+        candidate = resolve_project_path(key_path)
+        if candidate and (candidate / "rolling_predictions.csv").exists():
+            return candidate
+
+    metric_files = sorted(
+        OFFICIAL_ROOT.glob("**/official_metrics.json"),
+        key=lambda item: item.stat().st_mtime if item.exists() else 0.0,
+        reverse=True,
+    )
+    for metrics_path in metric_files:
+        candidate = metrics_path.parent
+        if (candidate / "rolling_predictions.csv").exists() and is_arima_metrics_file(metrics_path):
+            return candidate
+
+    # Centralized fallback for a freshly cloned repo before export metadata exists.
+    return ARIMA_FAMILY_ROOT / "window_90"
+
+
+ARIMA_ROOT = discover_arima_root()
 
 
 def display_model_name(run_id: str) -> str:
@@ -171,6 +231,22 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
             if line:
                 rows.append(json.loads(line))
     return rows
+
+
+def load_text_documents() -> pd.DataFrame:
+    rows = read_jsonl(TEXT_DOCUMENTS_CLEANED_GZ_PATH)
+    frame = pd.DataFrame(rows)
+    if "date" in frame.columns:
+        frame["date"] = pd.to_datetime(frame["date"], errors="coerce")
+    return frame
+
+
+def load_image_manifest() -> pd.DataFrame:
+    rows = read_jsonl(IMAGE_MANIFEST_CLEANED_GZ_PATH)
+    frame = pd.DataFrame(rows)
+    if "date" in frame.columns:
+        frame["date"] = pd.to_datetime(frame["date"], errors="coerce")
+    return frame
 
 
 def load_event_windows() -> pd.DataFrame:
