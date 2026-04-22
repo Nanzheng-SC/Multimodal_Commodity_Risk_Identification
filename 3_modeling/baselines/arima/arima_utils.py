@@ -35,7 +35,7 @@ MODEL_OFFICIAL_NAME = "ARIMA-residual"
 LABEL_AVAILABILITY_RULE = "target_end_strictly_before_forecast_origin"
 MAINLINE_RUN_ID = "late_gru_gate_validation_selected_top2"
 MODEL_DISPLAY_NAMES = {
-    MAINLINE_RUN_ID: "TimeMixer (late.gru_gate)",
+    MAINLINE_RUN_ID: "TimeMixer (fusion; late.gru_gate)",
     "late.gru_concat": "TimeMixer (late.gru_concat)",
     "intermediate.gated": "TimeMixer (intermediate.gated)",
     "Structured": "TimeMixer (structured)",

@@ -44,7 +44,7 @@ HORIZON_DAYS = 30
 MAINLINE_RUN_ID = "late_gru_gate_validation_selected_top2"
 
 MODEL_DISPLAY_NAMES = {
-    MAINLINE_RUN_ID: "TimeMixer (late.gru_gate)",
+    MAINLINE_RUN_ID: "TimeMixer (fusion; late.gru_gate)",
     "late.gru_concat": "TimeMixer (late.gru_concat)",
     "intermediate.gated": "TimeMixer (intermediate.gated)",
     "Structured": "TimeMixer (structured)",

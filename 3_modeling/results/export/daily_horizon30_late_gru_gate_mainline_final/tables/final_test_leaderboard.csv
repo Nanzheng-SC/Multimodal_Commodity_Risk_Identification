@@ -1,5 +1,5 @@
 run_id,model,test_rmse_mean,test_mae_mean
-late_gru_gate_validation_selected_top2,TimeMixer (late.gru_gate),15.470465802144204,12.241180327777776
+late_gru_gate_validation_selected_top2,TimeMixer (fusion; late.gru_gate),15.470465802144204,12.241180327777776
 Image,TimeMixer (image),15.880632423056282,12.584294001261393
 Text,TimeMixer (text),16.00996802897935,12.704315821329752
 late.gru_concat,TimeMixer (late.gru_concat),16.124977118042665,12.735534032185871
