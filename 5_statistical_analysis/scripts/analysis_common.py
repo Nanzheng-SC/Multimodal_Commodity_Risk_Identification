@@ -151,6 +151,23 @@ def add_display_model(frame: pd.DataFrame, model_column: str = "model") -> pd.Da
     return result
 
 
+def model_color(model: str, role: str | None = None) -> str:
+    role = str(role or "")
+    if role == "mainline":
+        return PALETTE["green"]
+    if role == "fusioner_control":
+        return PALETTE["blue"]
+    if role == "single_modal_control":
+        return PALETTE["mid"]
+    if role == "baseline_control":
+        return PALETTE["light"]
+    return PALETTE["light"]
+
+
+def model_marker_size(role: str | None = None) -> int:
+    return 150 if str(role or "") == "mainline" else 90
+
+
 def configure_paper_style() -> None:
     plt.rcParams.update(
         {

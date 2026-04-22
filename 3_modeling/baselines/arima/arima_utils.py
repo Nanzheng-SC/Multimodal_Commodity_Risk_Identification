@@ -369,8 +369,8 @@ def update_export_tables(arima_dir: Path, fixed_metrics: dict[str, float], rolli
         ],
         ignore_index=True,
     )
-    # The paper's final selection basis keeps the official mainline first and
-    # treats ARIMA as a baseline control even if a single metric is competitive.
+    # The paper's final selection basis keeps the official mainline first while
+    # baseline controls remain sorted by the same rolling criterion.
     basis["role_order"] = np.where(basis["role"].astype(str) == "mainline", 0, 1)
     basis = basis.sort_values(["role_order", "rolling_score"], na_position="last").drop(columns=["role_order"])
     basis.to_csv(basis_path, index=False, encoding="utf-8")
@@ -389,7 +389,7 @@ def update_export_tables(arima_dir: Path, fixed_metrics: dict[str, float], rolli
         },
         "target": "target_brent_avg_next_30d - reference_brent",
         "label_availability_rule": LABEL_AVAILABILITY_RULE,
-        "note": "Added as a strict classical statistical baseline; final mainline selection is unchanged.",
+        "note": "Recorded as a baseline control under the same benchmark table semantics; final mainline selection is unchanged.",
     }
     summary["final_model_display_name"] = display_model_name(summary.get("final_name", MAINLINE_RUN_ID))
     summary["final_run_id"] = summary.get("final_name", MAINLINE_RUN_ID)
@@ -422,11 +422,11 @@ def save_simple_rolling_plots(rolling_summary: pd.DataFrame, figure_dir: Path) -
     configure_matplotlib()
     frame = rolling_summary.sort_values("rolling_score", ascending=True).copy()
     plt.figure(figsize=(11, 6))
-    colors = ["#1f6f8b" if model == MODEL_DISPLAY_NAME else "#9ca3af" for model in frame["model"]]
+    colors = ["#276749" if str(model).startswith("TimeMixer") else "#d1dbe2" for model in frame["model"]]
     plt.barh(frame["model"], frame["rolling_score"], color=colors)
     plt.xlabel("Rolling score = RMSE mean + 0.25 * RMSE std")
     plt.title("Rolling Robustness Score")
     plt.grid(axis="x", alpha=0.25)
     plt.tight_layout()
-    plt.savefig(figure_dir / "arima_export_rolling_score_context.png", dpi=180)
+    plt.savefig(figure_dir / "export_rolling_score_context.png", dpi=180)
     plt.close()

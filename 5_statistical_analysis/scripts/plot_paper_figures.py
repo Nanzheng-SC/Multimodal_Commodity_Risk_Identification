@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from analysis_common import FIGURE_DIR, PALETTE, TABLE_DIR, configure_paper_style, ensure_dirs, save_figure, style_axis
+from analysis_common import FIGURE_DIR, PALETTE, TABLE_DIR, configure_paper_style, ensure_dirs, model_color, save_figure, style_axis
 
 
 def plot_fixed_vs_rolling() -> None:
@@ -17,7 +17,7 @@ def plot_fixed_vs_rolling() -> None:
     frame = frame.dropna(subset=["test_rmse_mean", "rolling_score"]).sort_values("test_rmse_mean", ascending=False)
     configure_paper_style()
     fig, axes = plt.subplots(1, 2, figsize=(17.5, 7.2), gridspec_kw={"width_ratios": [1.0, 1.0]})
-    colors = [PALETTE["green"] if role == "mainline" else PALETTE["orange"] if model == "ARIMA" else PALETTE["light"] for model, role in zip(frame["model"], frame["role"])]
+    colors = [model_color(model, role) for model, role in zip(frame["model"], frame["role"])]
     axes[0].barh(frame["model"], frame["test_rmse_mean"], color=colors, edgecolor=PALETTE["line"], linewidth=0.75)
     axes[0].set_xlabel("Fixed test RMSE")
     axes[0].set_title("Fixed Test Error")
@@ -25,15 +25,15 @@ def plot_fixed_vs_rolling() -> None:
     style_axis(axes[0])
 
     roll = frame.sort_values("rolling_score", ascending=False)
-    colors = [PALETTE["green"] if role == "mainline" else PALETTE["orange"] if model == "ARIMA" else PALETTE["light"] for model, role in zip(roll["model"], roll["role"])]
+    colors = [model_color(model, role) for model, role in zip(roll["model"], roll["role"])]
     axes[1].barh(roll["model"], roll["rolling_score"], color=colors, edgecolor=PALETTE["line"], linewidth=0.75)
     axes[1].set_xlabel("Rolling score")
     axes[1].set_title("6-Fold Rolling Stability")
     axes[1].set_xlim(0, roll["rolling_score"].max() * 1.14)
     style_axis(axes[1])
-    fig.suptitle("Official Benchmark Context with Classical ARIMA Baseline", fontsize=18, y=0.98)
+    fig.suptitle("Official Benchmark Context Across Models", fontsize=18, y=0.98)
     fig.tight_layout(rect=[0, 0, 1, 0.92])
-    save_figure(fig, FIGURE_DIR / "paper_benchmark_context_with_arima.png")
+    save_figure(fig, FIGURE_DIR / "paper_benchmark_context.png")
 
 
 def plot_high_volatility() -> None:
@@ -69,6 +69,12 @@ def main() -> None:
     ensure_dirs()
     plot_fixed_vs_rolling()
     plot_high_volatility()
+    try:
+        from plot_extended_paper_figures import main as plot_extended
+
+        plot_extended()
+    except Exception as exc:
+        print(f"Skipped extended paper figures: {exc}")
     print(f"Paper figures refreshed in {FIGURE_DIR}")
 
 

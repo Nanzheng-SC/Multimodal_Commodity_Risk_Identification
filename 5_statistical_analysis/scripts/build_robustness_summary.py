@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import numpy as np
 import pandas as pd
 
 from analysis_common import (
@@ -18,6 +17,8 @@ from analysis_common import (
     load_chapter3_structured,
     load_event_windows,
     metrics_for_prediction_frame,
+    model_color,
+    model_marker_size,
     save_figure,
     style_axis,
 )
@@ -50,7 +51,7 @@ def build_comparison_table() -> pd.DataFrame:
     fixed = fixed.drop(columns=["model"]).rename(columns={"run_id": "model"})
     result = rolling.merge(fixed, on="model", how="left")
     role_map = {
-        "ARIMA": "classical_statistical_baseline",
+        "ARIMA": "baseline_control",
         "Naive": "baseline_control",
         "HAR-no-leak": "baseline_control",
         "LSTM": "baseline_control",
@@ -60,12 +61,8 @@ def build_comparison_table() -> pd.DataFrame:
         "late.gru_concat": "fusioner_control",
         "intermediate.gated": "fusioner_control",
     }
-    mainline = str(result.iloc[0]["model"])
-    if mainline == "ARIMA" and len(result) > 1:
-        # The mainline is the existing late.gru_gate row, not whichever row sorts first after adding ARIMA.
-        candidates = result[result["model"].astype(str).str.startswith("late_gru_gate")]
-        if not candidates.empty:
-            mainline = str(candidates.iloc[0]["model"])
+    run_ids = set(result["model"].astype(str))
+    mainline = MAINLINE_NAME_FALLBACK if MAINLINE_NAME_FALLBACK in run_ids else str(result.iloc[0]["model"])
     result["role"] = result["model"].map(role_map).fillna("mainline")
     result.loc[result["model"] == mainline, "role"] = "mainline"
     result = result.rename(columns={"model": "run_id"})
@@ -156,15 +153,12 @@ def save_rolling_score_plot(comparison: pd.DataFrame) -> None:
     configure_paper_style()
     frame = comparison.sort_values("rolling_score", ascending=False)
     fig, ax = plt.subplots(figsize=(13.5, 7.4))
-    colors = [
-        PALETTE["green"] if role == "mainline" else PALETTE["orange"] if model == "ARIMA" else PALETTE["light"]
-        for model, role in zip(frame["model"], frame["role"])
-    ]
+    colors = [model_color(model, role) for model, role in zip(frame["model"], frame["role"])]
     ax.barh(frame["model"], frame["rolling_score"], color=colors, edgecolor=PALETTE["line"], linewidth=0.75)
     for idx, row in enumerate(frame.itertuples(index=False)):
         ax.text(row.rolling_score + 0.08, idx, f"{row.rolling_score:.3f}", va="center", fontsize=10.8)
     ax.set_xlabel("6-fold rolling score = RMSE mean + 0.25 * RMSE std")
-    ax.set_title("Robustness Comparison Including ARIMA Baseline")
+    ax.set_title("Rolling Robustness Comparison Across Models")
     ax.set_xlim(0, max(frame["rolling_score"]) * 1.16)
     style_axis(ax)
     fig.tight_layout()
@@ -181,8 +175,8 @@ def save_rmse_direction_scatter(comparison: pd.DataFrame) -> None:
     for _, row in comparison.iterrows():
         role = row.get("role", "")
         model = str(row["model"])
-        color = PALETTE["green"] if role == "mainline" else PALETTE["orange"] if model == "ARIMA" else PALETTE["mid"]
-        size = 150 if role == "mainline" else 130 if model == "ARIMA" else 90
+        color = model_color(model, role)
+        size = model_marker_size(role)
         ax.scatter(row["rolling_score"], row["direction_acc_mean"] * 100.0, s=size, color=color, edgecolor=PALETTE["line"], linewidth=0.8, zorder=3)
         ax.text(row["rolling_score"] + 0.025, row["direction_acc_mean"] * 100.0 + 0.45, model, fontsize=9.5)
     ax.invert_xaxis()
@@ -206,7 +200,11 @@ def save_event_performance_plot(event_perf: pd.DataFrame) -> None:
         return
     frame = event_perf.groupby("model", as_index=False).agg(rmse=("rmse", "mean"), mae=("mae", "mean"), n=("n", "sum"))
     frame = frame.sort_values("rmse", ascending=False)
-    colors = [PALETTE["orange"] if model == "ARIMA" else PALETTE["green"] if str(model).startswith("TimeMixer (late.gru_gate)") else PALETTE["light"] for model in frame["model"]]
+    mainline_display = display_model_name(MAINLINE_NAME_FALLBACK)
+    colors = [
+        model_color(model, "mainline" if str(model) == mainline_display else "baseline_control")
+        for model in frame["model"]
+    ]
     ax.barh(frame["model"], frame["rmse"], color=colors, edgecolor=PALETTE["line"], linewidth=0.8)
     for idx, row in enumerate(frame.itertuples(index=False)):
         ax.text(row.rmse + 0.06, idx, f"{row.rmse:.2f} (n={row.n})", va="center", fontsize=10.8)

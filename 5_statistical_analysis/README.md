@@ -22,6 +22,11 @@ python 5_statistical_analysis/scripts/build_robustness_summary.py
 python 5_statistical_analysis/scripts/plot_paper_figures.py
 ```
 
+`plot_paper_figures.py` also calls `plot_extended_paper_figures.py`, which
+adds line charts, heatmaps, and 3D diagnostic views. Run
+`plot_extended_paper_figures.py` directly only when refreshing those figures
+without rebuilding the standard paper figures.
+
 Outputs:
 
 ```text

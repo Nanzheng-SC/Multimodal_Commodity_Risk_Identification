@@ -98,7 +98,7 @@
     },
     "target": "target_brent_avg_next_30d - reference_brent",
     "label_availability_rule": "target_end_strictly_before_forecast_origin",
-    "note": "Added as a strict classical statistical baseline; final mainline selection is unchanged."
+    "note": "Recorded as a baseline control under the same benchmark table semantics; final mainline selection is unchanged."
   },
   "export_files": {
     "arima_official_dir": "3_modeling/results/official/daily_horizon30/arima_residual/window_90",
