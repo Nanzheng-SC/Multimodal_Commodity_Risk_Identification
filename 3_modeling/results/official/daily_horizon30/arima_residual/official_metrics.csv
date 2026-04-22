@@ -1,0 +1,2 @@
+model,display_name,frequency,window_length,selected_order,final_valid_rmse,test_rmse,test_mae,test_mape,test_direction_acc,rolling_score,rolling_rmse_mean,rolling_direction_acc_mean,diagnostics_status
+ARIMA-residual,ARIMA,daily,90,"(3, 1, 2)",2.761490311947691,16.53935126844035,13.003877639770508,0.13163866102695465,0.21666666666666667,6.719899432575313,5.445295802748028,0.47500000000000003,FAILED_DIAGNOSTIC

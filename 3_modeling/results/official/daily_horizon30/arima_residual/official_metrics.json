@@ -1,0 +1,271 @@
+{
+  "model": "ARIMA-residual",
+  "display_name": "ARIMA",
+  "input_variant": "target_residual_history",
+  "frequency": "daily",
+  "target": "target_brent_avg_next_30d",
+  "target_definition": "target_brent_avg_next_30d - reference_brent",
+  "target_mode": "residual",
+  "forecast_horizon_days": 30,
+  "window_length": 90,
+  "label_availability_rule": "target_end_strictly_before_forecast_origin",
+  "time_series_root": "2_encoding_feature/outputs/daily/time_series_horizon30_mainline/late_gru_gate/window_90",
+  "split_strategy": "mainline_window90_fixed_test_plus_6fold_rolling_strict_label_availability",
+  "selection_metric": "validation_rmse",
+  "selected_order": [
+    3,
+    1,
+    2
+  ],
+  "order_grid": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      2
+    ],
+    [
+      0,
+      0,
+      3
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      1,
+      1
+    ],
+    [
+      0,
+      1,
+      2
+    ],
+    [
+      0,
+      1,
+      3
+    ],
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      2
+    ],
+    [
+      1,
+      0,
+      3
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      2
+    ],
+    [
+      1,
+      1,
+      3
+    ],
+    [
+      2,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      1
+    ],
+    [
+      2,
+      0,
+      2
+    ],
+    [
+      2,
+      0,
+      3
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      1
+    ],
+    [
+      2,
+      1,
+      2
+    ],
+    [
+      2,
+      1,
+      3
+    ],
+    [
+      3,
+      0,
+      0
+    ],
+    [
+      3,
+      0,
+      1
+    ],
+    [
+      3,
+      0,
+      2
+    ],
+    [
+      3,
+      0,
+      3
+    ],
+    [
+      3,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      1
+    ],
+    [
+      3,
+      1,
+      2
+    ],
+    [
+      3,
+      1,
+      3
+    ]
+  ],
+  "aggregate_metrics": {
+    "final_valid": {
+      "mse": 7.625828742980957,
+      "rmse": 2.761490311947691,
+      "mae": 2.3608338832855225,
+      "mape": 0.03692163527011871,
+      "direction_acc": 0.6666666666666666
+    },
+    "test": {
+      "mse": 273.5501403808594,
+      "rmse": 16.53935126844035,
+      "mae": 13.003877639770508,
+      "mape": 0.13163866102695465,
+      "direction_acc": 0.21666666666666667
+    },
+    "rolling_validation": {
+      "folds": 6,
+      "rmse_mean": 5.445295802748028,
+      "rmse_std": 5.098414519309142,
+      "rolling_score": 6.719899432575313,
+      "rmse_median": 3.34117237556762,
+      "mae_mean": 4.288908541202545,
+      "mae_std": 4.021371900980763,
+      "mape_mean": 0.05322179291397333,
+      "direction_acc_mean": 0.47500000000000003
+    }
+  },
+  "deployed_run": {
+    "mode": "single_arima_order_selected_by_validation_strict_label_availability",
+    "final_valid_rmse": 2.761490311947691,
+    "final_valid_mae": 2.3608338832855225,
+    "final_valid_mape": 0.03692163527011871,
+    "direction_acc": 0.21666666666666667,
+    "test_rmse": 16.53935126844035,
+    "test_mae": 13.003877639770508,
+    "test_mape": 0.13163866102695465
+  },
+  "rolling_metrics": {
+    "model": "ARIMA",
+    "folds": 6,
+    "rmse_mean": 5.445295802748028,
+    "rmse_std": 5.098414519309142,
+    "rolling_score": 6.719899432575313,
+    "rmse_median": 3.34117237556762,
+    "mae_mean": 4.288908541202545,
+    "mae_std": 4.021371900980763,
+    "mape_mean": 0.05322179291397333,
+    "direction_acc_mean": 0.47500000000000003,
+    "selection_rule": "single-variable ARIMA residual baseline with strict label-availability lag"
+  },
+  "baseline_zero": {
+    "final_valid": {
+      "mse": 7.6014204025268555,
+      "rmse": 2.7570673554570364,
+      "mae": 2.219010829925537,
+      "mape": 0.03374866023659706,
+      "direction_acc": 0.0
+    },
+    "final_test": {
+      "mse": 263.69976806640625,
+      "rmse": 16.238835181945973,
+      "mae": 12.986078262329102,
+      "mape": 0.13254112005233765,
+      "direction_acc": 0.0
+    }
+  },
+  "diagnostics_status": "FAILED_DIAGNOSTIC",
+  "diagnostics": {
+    "status": "FAILED_DIAGNOSTIC",
+    "issues": [
+      "validation RMSE does not beat the naive reference baseline",
+      "test RMSE is worse than the naive reference baseline"
+    ],
+    "checks": {
+      "prediction_std_gt_threshold": true,
+      "metrics_not_equal_naive_baseline": true,
+      "validation_beats_naive_baseline": false,
+      "test_not_worse_than_naive_baseline": false
+    },
+    "best_run_prediction_std": 11.493785858154297,
+    "best_run_prediction_mean": 76.73837280273438,
+    "naive_baseline_val_rmse": 2.7570673554570364,
+    "naive_baseline_test_rmse": 16.238835181945973,
+    "model_val_rmse": 2.761490311947691,
+    "model_test_rmse": 16.53935126844035,
+    "aggregate_val_rmse_mean": 2.761490311947691,
+    "aggregate_test_rmse_mean": 16.53935126844035
+  },
+  "elapsed_sec": 102.98857402801514
+}

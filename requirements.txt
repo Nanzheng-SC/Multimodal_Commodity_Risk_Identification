@@ -11,3 +11,5 @@ Pillow==12.1.1
 
 # 其他
 scikit-learn==1.8.0
+matplotlib==3.9.2
+statsmodels==0.14.2

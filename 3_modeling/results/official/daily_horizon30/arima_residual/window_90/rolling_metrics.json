@@ -1,0 +1,13 @@
+{
+  "model": "ARIMA",
+  "folds": 6,
+  "rmse_mean": 5.445295802748028,
+  "rmse_std": 5.098414519309142,
+  "rolling_score": 6.719899432575313,
+  "rmse_median": 3.34117237556762,
+  "mae_mean": 4.288908541202545,
+  "mae_std": 4.021371900980763,
+  "mape_mean": 0.05322179291397333,
+  "direction_acc_mean": 0.47500000000000003,
+  "selection_rule": "single-variable ARIMA residual baseline with strict label-availability lag"
+}

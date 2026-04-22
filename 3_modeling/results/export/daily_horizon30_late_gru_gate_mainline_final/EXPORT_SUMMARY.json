@@ -72,5 +72,38 @@
     "best_control_rolling_rmse_mean": 4.968824145850442,
     "all_pass": true
   },
-  "selection_note": "Final model uses TimeMixer with fusion input and late.gru_gate."
+  "selection_note": "Final model uses TimeMixer with fusion input and late.gru_gate.",
+  "arima_baseline": {
+    "model": "ARIMA-residual",
+    "display_name": "ARIMA",
+    "official_dir": "3_modeling/results/official/daily_horizon30/arima_residual/window_90",
+    "fixed_test": {
+      "mse": 273.5501403808594,
+      "rmse": 16.53935126844035,
+      "mae": 13.003877639770508,
+      "mape": 0.13163866102695465,
+      "direction_acc": 0.21666666666666667
+    },
+    "rolling": {
+      "model": "ARIMA",
+      "folds": 6,
+      "rmse_mean": 5.445295802748028,
+      "rmse_std": 5.098414519309142,
+      "rolling_score": 6.719899432575313,
+      "rmse_median": 3.34117237556762,
+      "mae_mean": 4.288908541202545,
+      "mae_std": 4.021371900980763,
+      "mape_mean": 0.05322179291397333,
+      "direction_acc_mean": 0.47500000000000003
+    },
+    "target": "target_brent_avg_next_30d - reference_brent",
+    "label_availability_rule": "target_end_strictly_before_forecast_origin",
+    "note": "Added as a strict classical statistical baseline; final mainline selection is unchanged."
+  },
+  "export_files": {
+    "arima_official_dir": "3_modeling/results/official/daily_horizon30/arima_residual/window_90",
+    "statistical_analysis_root": "5_statistical_analysis"
+  },
+  "final_model_display_name": "TimeMixer (late.gru_gate)",
+  "final_run_id": "late_gru_gate_validation_selected_top2"
 }
