@@ -1,12 +1,12 @@
 # 5_statistical_analysis
 
-This directory contains paper-facing statistical analysis assets. It does not train models.
+This directory contains statistical analysis and evaluation assets. It does not train models.
 
 Main roles:
 
-- Chapter 3 descriptive and diagnostic data packages.
-- Chapter 5 rolling robustness and event-window summaries.
-- Final paper tables and figures used for writing and defense material.
+- Descriptive and diagnostic data packages.
+- Rolling robustness and event-window summaries.
+- Evaluation tables and figures for reporting model behavior.
 
 Run the scripts in this order:
 
@@ -19,23 +19,19 @@ python 5_statistical_analysis/scripts/run_lag_relationship_analysis.py
 python 5_statistical_analysis/scripts/run_source_composition.py
 python 5_statistical_analysis/scripts/run_event_window_analysis.py
 python 5_statistical_analysis/scripts/build_robustness_summary.py
-python 5_statistical_analysis/scripts/plot_chapter5_figures.py
+python 5_statistical_analysis/scripts/plot_evaluation_figures.py
 ```
 
-Final Chapter 5 figures:
+Evaluation figures:
 
-| chapter section | figure |
+| purpose | figure |
 | --- | --- |
-| 5.1.1 fixed test comparison | `fixed_test_overview.png` |
-| 5.1.2 rolling comparison | `rolling_overview_scatter.png` |
-| 5.2.1 multimodal gain | `multimodal_gain_comparison.png` |
-| 5.2.2 fusion strategy comparison | `fusion_strategy_comparison.png` |
-| 5.3.1 high-risk period performance | `high_volatility_performance_comparison.png` |
-| 5.3.2 mainline fold stability | `mainline_fold_stability.png` |
-
-`plot_paper_figures.py` is kept as a compatibility notice only. It no longer
-generates the old benchmark-context figure or calls the extended 3D/heatmap
-diagnostic views.
+| fixed test comparison | `fixed_test_overview.png` |
+| rolling comparison | `rolling_overview_scatter.png` |
+| multimodal gain | `multimodal_gain_comparison.png` |
+| fusion strategy comparison | `fusion_strategy_comparison.png` |
+| high-risk period performance | `high_volatility_performance_comparison.png` |
+| mainline fold stability | `mainline_fold_stability.png` |
 
 Outputs:
 

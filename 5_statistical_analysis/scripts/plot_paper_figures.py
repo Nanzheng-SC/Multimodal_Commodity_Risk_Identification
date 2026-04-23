@@ -5,8 +5,8 @@ from analysis_common import FIGURE_DIR
 
 def main() -> None:
     print(
-        "plot_paper_figures.py no longer builds Chapter 5 figures. "
-        "Run 5_statistical_analysis/scripts/plot_chapter5_figures.py for the final Chapter 5 figure set. "
+        "This compatibility entry no longer builds the evaluation figures. "
+        "Run 5_statistical_analysis/scripts/plot_evaluation_figures.py instead. "
         f"Output directory: {FIGURE_DIR}"
     )
 

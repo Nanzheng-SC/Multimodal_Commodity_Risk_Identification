@@ -23,7 +23,7 @@ NEUTRAL_DARK = "#7d8b96"
 GRID_COLOR = PALETTE["grid"]
 
 
-def configure_chapter5_style() -> None:
+def configure_evaluation_style() -> None:
     import matplotlib.pyplot as plt
 
     configure_paper_style()
@@ -89,7 +89,7 @@ def plot_fixed_test_overview() -> None:
     colors = [model_color(row.run_id, row.model) for row in frame.itertuples(index=False)]
     y = np.arange(len(frame))
 
-    configure_chapter5_style()
+    configure_evaluation_style()
     fig, axes = plt.subplots(1, 2, figsize=(15.8, 7.0), sharey=True, gridspec_kw={"wspace": 0.10})
     metrics = [("test_rmse_mean", "RMSE（越低越好）"), ("test_mae_mean", "MAE（越低越好）")]
     for ax, (column, xlabel) in zip(axes, metrics):
@@ -103,7 +103,7 @@ def plot_fixed_test_overview() -> None:
     axes[0].invert_yaxis()
     axes[0].set_title("固定测试集 RMSE 排序")
     axes[1].set_title("固定测试集 MAE 排序")
-    fig.suptitle("第五章（一）1 固定测试集综合比较", fontsize=17, y=0.98)
+    fig.suptitle("固定测试集综合比较", fontsize=17, y=0.98)
     fig.subplots_adjust(left=0.20, right=0.985, top=0.88, bottom=0.12, wspace=0.12)
     save_figure(fig, FIGURE_DIR / "fixed_test_overview.png", dpi=220)
 
@@ -116,7 +116,7 @@ def plot_rolling_overview_scatter() -> None:
     frame = frame.dropna(subset=["rolling_score", "direction_acc_mean"]).copy()
     frame["direction_pct"] = frame["direction_acc_mean"] * 100.0
 
-    configure_chapter5_style()
+    configure_evaluation_style()
     fig, ax = plt.subplots(figsize=(10.8, 7.0))
     for _, row in frame.iterrows():
         color = model_color(row["run_id"], row["model"])
@@ -141,7 +141,7 @@ def plot_rolling_overview_scatter() -> None:
 
     ax.set_xlabel("Rolling score（越低越好）")
     ax.set_ylabel("方向准确率（%）")
-    ax.set_title("第五章（一）2 Rolling 综合比较")
+    ax.set_title("Rolling 综合比较")
     ax.set_xlim(float(frame["rolling_score"].min()) - 0.15, float(frame["rolling_score"].max()) + 0.40)
     ax.set_ylim(max(0, float(frame["direction_pct"].min()) - 8), min(100, float(frame["direction_pct"].max()) + 8))
     style_axis(ax, xgrid=True, ygrid=True)
@@ -165,7 +165,7 @@ def plot_dual_panel_bars(frame: pd.DataFrame, labels: list[str], title: str, pat
     y = np.arange(len(frame))
     colors = [model_color(row.run_id, row.model) if row.run_id in highlight_run_ids else NEUTRAL_COLOR for row in frame.itertuples(index=False)]
 
-    configure_chapter5_style()
+    configure_evaluation_style()
     fig, axes = plt.subplots(1, 2, figsize=(13.8, 5.8), sharey=True, gridspec_kw={"wspace": 0.08})
     panels = [("test_rmse_mean", "固定测试集 RMSE（越低越好）"), ("rolling_score", "Rolling score（越低越好）")]
     for ax, (column, xlabel) in zip(axes, panels):
@@ -194,7 +194,7 @@ def plot_multimodal_gain_comparison() -> None:
     plot_dual_panel_bars(
         frame,
         labels,
-        "第五章（二）1 单模态与多模态增益",
+        "单模态与多模态增益",
         FIGURE_DIR / "multimodal_gain_comparison.png",
         highlight_run_ids={MAINLINE_RUN_ID},
     )
@@ -210,7 +210,7 @@ def plot_fusion_strategy_comparison() -> None:
     plot_dual_panel_bars(
         frame,
         labels,
-        "第五章（二）2 融合策略比较",
+        "融合策略比较",
         FIGURE_DIR / "fusion_strategy_comparison.png",
         highlight_run_ids={MAINLINE_RUN_ID},
     )
@@ -231,7 +231,7 @@ def plot_high_volatility_performance() -> None:
     bar_width = 0.34
     x = np.arange(len(model_order))
 
-    configure_chapter5_style()
+    configure_evaluation_style()
     fig, axes = plt.subplots(1, 2, figsize=(13.6, 5.8), gridspec_kw={"wspace": 0.20})
     metric_info = [("rmse", "RMSE（越低越好）"), ("direction_acc", "方向准确率（%）")]
     for ax, (metric, ylabel) in zip(axes, metric_info):
@@ -254,7 +254,7 @@ def plot_high_volatility_performance() -> None:
         ax.set_ylim(0, max(float(frame[metric].max() * (100.0 if metric == "direction_acc" else 1.0)) * 1.25, 1.0))
         style_axis(ax, xgrid=False, ygrid=True)
     axes[0].legend(frameon=False, loc="upper left")
-    fig.suptitle("第五章（三）1 高风险阶段表现", fontsize=16.5, y=0.98)
+    fig.suptitle("高风险阶段表现", fontsize=16.5, y=0.98)
     fig.subplots_adjust(left=0.08, right=0.985, top=0.84, bottom=0.16, wspace=0.24)
     save_figure(fig, FIGURE_DIR / "high_volatility_performance_comparison.png", dpi=220)
 
@@ -268,7 +268,7 @@ def plot_mainline_fold_stability() -> None:
     if len(frame) != 6:
         raise ValueError(f"Expected 6 mainline folds in {FOLD_METRICS_PATH}, got {len(frame)}.")
 
-    configure_chapter5_style()
+    configure_evaluation_style()
     fig, ax1 = plt.subplots(figsize=(11.6, 6.4))
     ax2 = ax1.twinx()
     ax1.plot(frame["fold"], frame["rmse"], marker="o", linewidth=2.6, markersize=7.5, color=MAIN_COLOR, label="RMSE")
@@ -295,7 +295,7 @@ def plot_mainline_fold_stability() -> None:
     ax2.spines["top"].set_visible(False)
     lines = ax1.get_lines() + ax2.get_lines()
     ax1.legend(lines, [line.get_label() for line in lines], frameon=False, loc="upper left")
-    ax1.set_title("第五章（三）2 主线折次稳定性")
+    ax1.set_title("主线折次稳定性")
     fig.tight_layout()
     save_figure(fig, FIGURE_DIR / "mainline_fold_stability.png", dpi=220)
 
@@ -308,7 +308,7 @@ def main() -> None:
     plot_fusion_strategy_comparison()
     plot_high_volatility_performance()
     plot_mainline_fold_stability()
-    print(f"Chapter 5 figures refreshed in {FIGURE_DIR}")
+    print(f"Evaluation figures refreshed in {FIGURE_DIR}")
 
 
 if __name__ == "__main__":
