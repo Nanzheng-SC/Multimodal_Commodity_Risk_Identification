@@ -60,6 +60,24 @@ MODEL_DISPLAY_NAMES = {
     "ARIMA": "ARIMA",
 }
 
+FIXED_TEST_PREDICTION_PATTERNS = {
+    "TimeMixer (fusion; late.gru_gate)": [
+        "timemixer_late_gru_gate_mainline_final/**/best_run/predictions_test.csv",
+    ],
+    "ARIMA": [
+        "arima_residual/**/best_run/predictions_test.csv",
+    ],
+    "Naive": [
+        "naive_reference/**/best_run/predictions_test.csv",
+    ],
+    "HAR-no-leak": [
+        "har_no_leak_residual/**/best_run/predictions_test.csv",
+    ],
+    "LSTM": [
+        "lstm_residual/**/best_run/predictions_test.csv",
+    ],
+}
+
 PALETTE = {
     "main": "#174a68",
     "green": "#276749",
@@ -303,6 +321,28 @@ def available_prediction_frames() -> dict[str, pd.DataFrame]:
     if arima_path.exists():
         arima = pd.read_csv(arima_path, parse_dates=["date"])
         frames["ARIMA"] = arima.copy()
+    return frames
+
+
+def _latest_matching_official_file(patterns: Iterable[str]) -> Path | None:
+    matches: list[Path] = []
+    for pattern in patterns:
+        matches.extend(item for item in OFFICIAL_ROOT.glob(pattern) if item.is_file())
+    if not matches:
+        return None
+    return max(matches, key=lambda item: item.stat().st_mtime)
+
+
+def available_fixed_test_prediction_frames(model_names: Iterable[str] | None = None) -> dict[str, pd.DataFrame]:
+    requested = set(model_names or FIXED_TEST_PREDICTION_PATTERNS.keys())
+    frames: dict[str, pd.DataFrame] = {}
+    for model_name, patterns in FIXED_TEST_PREDICTION_PATTERNS.items():
+        if model_name not in requested:
+            continue
+        path = _latest_matching_official_file(patterns)
+        if path is None:
+            continue
+        frames[model_name] = pd.read_csv(path, parse_dates=["date"])
     return frames
 
 

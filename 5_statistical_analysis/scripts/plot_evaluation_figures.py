@@ -17,7 +17,6 @@ ROBUSTNESS_PATH = TABLE_DIR / "robustness_comparison_table.csv"
 HIGH_VOLATILITY_PATH = TABLE_DIR / "high_volatility_model_performance.csv"
 
 MAIN_COLOR = PALETTE["main"]
-ARIMA_COLOR = PALETTE["orange"]
 NEUTRAL_COLOR = "#cfd8df"
 NEUTRAL_DARK = "#7d8b96"
 GRID_COLOR = PALETTE["grid"]
@@ -218,18 +217,24 @@ def plot_high_volatility_performance() -> None:
 
     frame = pd.read_csv(HIGH_VOLATILITY_PATH)
     require_columns(frame, ["model", "regime", "rmse", "direction_acc"], HIGH_VOLATILITY_PATH)
-    frame = frame[frame["model"].isin([MAINLINE_LABEL, ARIMA_LABEL])].copy()
+    model_order = [MAINLINE_LABEL, "ARIMA", "Naive", "HAR-no-leak", "LSTM"]
+    frame = frame[frame["model"].isin(model_order)].copy()
     if frame.empty:
-        raise ValueError(f"{HIGH_VOLATILITY_PATH} has no mainline/ARIMA rows.")
+        raise ValueError(f"{HIGH_VOLATILITY_PATH} has no rows for the selected model set.")
     regime_order = ["normal_or_low_volatility", "high_volatility"]
     regime_labels = {"normal_or_low_volatility": "常态/低波动", "high_volatility": "高风险阶段"}
-    model_order = [MAINLINE_LABEL, ARIMA_LABEL]
-    model_labels = {MAINLINE_LABEL: "TimeMixer\n(fusion; late.gru_gate)", ARIMA_LABEL: "ARIMA"}
+    model_labels = {
+        MAINLINE_LABEL: "TimeMixer\n(fusion; late.gru_gate)",
+        "ARIMA": "ARIMA",
+        "Naive": "Naive",
+        "HAR-no-leak": "HAR-no-leak",
+        "LSTM": "LSTM",
+    }
     bar_width = 0.34
     x = np.arange(len(model_order))
 
     configure_evaluation_style()
-    fig, axes = plt.subplots(1, 2, figsize=(13.6, 5.8), gridspec_kw={"wspace": 0.20})
+    fig, axes = plt.subplots(1, 2, figsize=(16.0, 6.0), gridspec_kw={"wspace": 0.18})
     metric_info = [("rmse", "RMSE"), ("direction_acc", "方向准确率（%）")]
     for ax, (metric, ylabel) in zip(axes, metric_info):
         for offset_idx, regime in enumerate(regime_order):
@@ -238,7 +243,7 @@ def plot_high_volatility_performance() -> None:
             if metric == "direction_acc":
                 values = values * 100.0
             positions = x + (offset_idx - 0.5) * bar_width
-            colors = [model_color(model, model) for model in model_order]
+            colors = [MAIN_COLOR if model == MAINLINE_LABEL else NEUTRAL_COLOR for model in model_order]
             alpha = 0.45 if regime == "normal_or_low_volatility" else 0.94
             hatch = "//" if regime == "normal_or_low_volatility" else ""
             ax.bar(positions, values, width=bar_width, color=colors, alpha=alpha, hatch=hatch, edgecolor=PALETTE["line"], linewidth=0.75, label=regime_labels[regime])
@@ -264,27 +269,59 @@ def plot_mainline_fold_stability() -> None:
     frame = frame[frame["run_id"].eq(MAINLINE_RUN_ID)].sort_values("fold").copy()
     if len(frame) != 6:
         raise ValueError(f"Expected 6 mainline folds in {FOLD_METRICS_PATH}, got {len(frame)}.")
+    frame["direction_pct"] = frame["direction_acc"] * 100.0
 
     configure_evaluation_style()
-    fig, ax1 = plt.subplots(figsize=(11.6, 6.4))
-    ax2 = ax1.twinx()
-    ax1.plot(frame["fold"], frame["rmse"], marker="o", linewidth=2.6, markersize=7.5, color=MAIN_COLOR, label="RMSE")
-    ax2.plot(frame["fold"], frame["direction_acc"] * 100.0, marker="s", linewidth=2.2, markersize=6.8, color=ARIMA_COLOR, label="方向准确率")
-    ax1.set_xlabel("Rolling 折次")
-    ax1.set_ylabel("RMSE", color=MAIN_COLOR)
-    ax2.set_ylabel("方向准确率（%）", color=ARIMA_COLOR)
-    ax1.set_xticks(frame["fold"])
-    ax1.set_ylim(0, float(frame["rmse"].max()) * 1.18)
-    ax2.set_ylim(0, 100)
-    ax1.tick_params(axis="y", colors=MAIN_COLOR)
-    ax2.tick_params(axis="y", colors=ARIMA_COLOR)
-    style_axis(ax1, xgrid=True, ygrid=True)
-    ax2.spines["top"].set_visible(False)
-    lines = ax1.get_lines() + ax2.get_lines()
-    ax1.legend(lines, [line.get_label() for line in lines], frameon=False, loc="upper left")
-    ax1.set_title("TimeMixer (fusion; late.gru_gate) 折次结果")
-    fig.tight_layout()
+    fig, axes = plt.subplots(2, 1, figsize=(11.8, 8.2), sharex=True, gridspec_kw={"hspace": 0.16})
+    panel_specs = [
+        ("rmse", "RMSE", MAIN_COLOR, axes[0]),
+        ("direction_pct", "方向准确率（%）", PALETTE["blue"], axes[1]),
+    ]
+    for column, ylabel, color, ax in panel_specs:
+        ax.vlines(frame["fold"], 0, frame[column], color=NEUTRAL_DARK, linewidth=2.0, alpha=0.55)
+        ax.scatter(frame["fold"], frame[column], s=92, color=color, edgecolor=PALETTE["line"], linewidth=0.75, zorder=3)
+        for row in frame.itertuples(index=False):
+            value = getattr(row, column)
+            ax.text(row.fold, float(value) + float(frame[column].max()) * 0.03, f"{float(value):.2f}", ha="center", va="bottom", fontsize=9.3)
+        ax.set_ylabel(ylabel)
+        ax.set_ylim(0, float(frame[column].max()) * 1.22)
+        style_axis(ax, xgrid=False, ygrid=True)
+    axes[1].set_xlabel("Rolling 折次")
+    axes[1].set_xticks(frame["fold"])
+    fig.suptitle("TimeMixer (fusion; late.gru_gate) 折次结果", fontsize=16.5, y=0.98)
+    fig.subplots_adjust(left=0.10, right=0.985, top=0.90, bottom=0.10, hspace=0.18)
     save_figure(fig, FIGURE_DIR / "mainline_fold_stability.png", dpi=220)
+
+
+def plot_mainline_fold_stability_bars() -> None:
+    import matplotlib.pyplot as plt
+
+    frame = pd.read_csv(FOLD_METRICS_PATH)
+    require_columns(frame, ["run_id", "fold", "rmse", "direction_acc"], FOLD_METRICS_PATH)
+    frame = frame[frame["run_id"].eq(MAINLINE_RUN_ID)].sort_values("fold").copy()
+    if len(frame) != 6:
+        raise ValueError(f"Expected 6 mainline folds in {FOLD_METRICS_PATH}, got {len(frame)}.")
+    frame["direction_pct"] = frame["direction_acc"] * 100.0
+
+    configure_evaluation_style()
+    fig, axes = plt.subplots(2, 1, figsize=(11.8, 8.2), sharex=True, gridspec_kw={"hspace": 0.16})
+    panel_specs = [
+        ("rmse", "RMSE", MAIN_COLOR, axes[0]),
+        ("direction_pct", "方向准确率（%）", PALETTE["blue"], axes[1]),
+    ]
+    for column, ylabel, color, ax in panel_specs:
+        ax.bar(frame["fold"], frame[column], color=color, edgecolor=PALETTE["line"], linewidth=0.75, width=0.62)
+        for row in frame.itertuples(index=False):
+            value = getattr(row, column)
+            ax.text(row.fold, float(value) + float(frame[column].max()) * 0.03, f"{float(value):.2f}", ha="center", va="bottom", fontsize=9.3)
+        ax.set_ylabel(ylabel)
+        ax.set_ylim(0, float(frame[column].max()) * 1.22)
+        style_axis(ax, xgrid=False, ygrid=True)
+    axes[1].set_xlabel("Rolling 折次")
+    axes[1].set_xticks(frame["fold"])
+    fig.suptitle("TimeMixer (fusion; late.gru_gate) 折次结果", fontsize=16.5, y=0.98)
+    fig.subplots_adjust(left=0.10, right=0.985, top=0.90, bottom=0.10, hspace=0.18)
+    save_figure(fig, FIGURE_DIR / "mainline_fold_stability_bars.png", dpi=220)
 
 
 def main() -> None:
@@ -295,6 +332,7 @@ def main() -> None:
     plot_fusion_strategy_comparison()
     plot_high_volatility_performance()
     plot_mainline_fold_stability()
+    plot_mainline_fold_stability_bars()
     print(f"Evaluation figures refreshed in {FIGURE_DIR}")
 
 

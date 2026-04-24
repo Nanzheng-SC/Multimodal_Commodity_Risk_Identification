@@ -10,6 +10,7 @@ from analysis_common import (
     OFFICIAL_ROOT,
     PALETTE,
     TABLE_DIR,
+    available_fixed_test_prediction_frames,
     display_model_name,
     available_prediction_frames,
     configure_analysis_style,
@@ -95,13 +96,25 @@ def build_fold_metrics() -> pd.DataFrame:
 
 
 def build_high_volatility_performance() -> pd.DataFrame:
-    structured = load_analysis_structured()[["date", "abs_brent_return_1d", "high_volatility_flag"]].copy()
+    structured = load_analysis_structured()[["date", "reference_brent", "abs_brent_return_1d", "high_volatility_flag"]].copy()
     structured["date"] = pd.to_datetime(structured["date"])
-    frames = available_prediction_frames()
+    frames = available_fixed_test_prediction_frames(
+        [
+            display_model_name(MAINLINE_RUN_ID),
+            "ARIMA",
+            "Naive",
+            "HAR-no-leak",
+            "LSTM",
+        ]
+    )
     rows = []
     for model, pred in frames.items():
         merged = pred.copy()
         merged["date"] = pd.to_datetime(merged["date"])
+        if "predicted_price" not in merged.columns and "y_pred" in merged.columns:
+            merged["predicted_price"] = pd.to_numeric(merged["y_pred"], errors="coerce")
+        if "target_price" not in merged.columns and "y_true" in merged.columns:
+            merged["target_price"] = pd.to_numeric(merged["y_true"], errors="coerce")
         merged = merged.merge(structured, on="date", how="left")
         for flag, group in merged.groupby(merged["high_volatility_flag"].fillna(0).astype(int)):
             if group.empty:
