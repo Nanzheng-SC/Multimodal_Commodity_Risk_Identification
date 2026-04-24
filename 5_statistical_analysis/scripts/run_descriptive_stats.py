@@ -3,7 +3,18 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from analysis_common import DATA_DIR, FIGURE_DIR, PALETTE, TABLE_DIR, configure_paper_style, ensure_dirs, load_chapter3_structured, save_figure, style_axis
+from analysis_common import (
+    FIGURE_DIR,
+    IMAGE_DAILY_SUMMARY_PATH,
+    PALETTE,
+    TABLE_DIR,
+    TEXT_DAILY_SUMMARY_PATH,
+    configure_analysis_style,
+    ensure_dirs,
+    load_analysis_structured,
+    save_figure,
+    style_axis,
+)
 
 
 KEY_VARIABLES = [
@@ -55,10 +66,8 @@ def build_annual_summary(frame: pd.DataFrame) -> pd.DataFrame:
 
 def build_coverage_summary() -> pd.DataFrame:
     rows = []
-    text_path = DATA_DIR / "chapter3_text_daily_summary.csv"
-    image_path = DATA_DIR / "chapter3_image_daily_summary.csv"
-    if text_path.exists():
-        text = pd.read_csv(text_path)
+    if TEXT_DAILY_SUMMARY_PATH.exists():
+        text = pd.read_csv(TEXT_DAILY_SUMMARY_PATH)
         rows.append(
             {
                 "source": "text",
@@ -68,8 +77,8 @@ def build_coverage_summary() -> pd.DataFrame:
                 "mean_daily_count": float(pd.to_numeric(text["text_count"], errors="coerce").mean()),
             }
         )
-    if image_path.exists():
-        image = pd.read_csv(image_path)
+    if IMAGE_DAILY_SUMMARY_PATH.exists():
+        image = pd.read_csv(IMAGE_DAILY_SUMMARY_PATH)
         rows.append(
             {
                 "source": "image",
@@ -85,7 +94,7 @@ def build_coverage_summary() -> pd.DataFrame:
 def save_price_residual_panel(frame: pd.DataFrame) -> None:
     import matplotlib.pyplot as plt
 
-    configure_paper_style()
+    configure_analysis_style()
     data = frame.dropna(subset=["Brent", "target_residual_30d"]).copy()
     data["date"] = pd.to_datetime(data["date"])
     fig, axes = plt.subplots(2, 1, figsize=(14.5, 8.2), sharex=True, gridspec_kw={"height_ratios": [1.25, 1.0]})
@@ -105,7 +114,7 @@ def save_price_residual_panel(frame: pd.DataFrame) -> None:
     axes[1].set_title("Target Residual: Future 30D Average - Current Brent")
     style_axis(axes[1], xgrid=False, ygrid=True)
     fig.tight_layout()
-    save_figure(fig, FIGURE_DIR / "chapter3_price_target_residual_panel.png")
+    save_figure(fig, FIGURE_DIR / "price_target_residual_panel.png")
 
 
 def save_coverage_plot(coverage: pd.DataFrame) -> None:
@@ -113,7 +122,7 @@ def save_coverage_plot(coverage: pd.DataFrame) -> None:
 
     if coverage.empty:
         return
-    configure_paper_style()
+    configure_analysis_style()
     fig, ax = plt.subplots(figsize=(9.5, 5.6))
     colors = [PALETTE["blue"], PALETTE["green"]][: len(coverage)]
     ax.bar(coverage["source"], coverage["coverage_rate"] * 100.0, color=colors, edgecolor=PALETTE["line"], linewidth=0.8)
@@ -124,12 +133,12 @@ def save_coverage_plot(coverage: pd.DataFrame) -> None:
     ax.set_title("Daily Text and Image Coverage")
     style_axis(ax, xgrid=False, ygrid=True)
     fig.tight_layout()
-    save_figure(fig, FIGURE_DIR / "chapter3_modality_coverage.png")
+    save_figure(fig, FIGURE_DIR / "modality_coverage.png")
 
 
 def main() -> None:
     ensure_dirs()
-    frame = load_chapter3_structured()
+    frame = load_analysis_structured()
     descriptive = build_descriptive_table(frame)
     annual = build_annual_summary(frame)
     coverage = build_coverage_summary()

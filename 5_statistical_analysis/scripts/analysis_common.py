@@ -36,6 +36,10 @@ DATA_DIR = ANALYSIS_ROOT / "data"
 OUTPUT_DIR = ANALYSIS_ROOT / "outputs"
 TABLE_DIR = OUTPUT_DIR / "tables"
 FIGURE_DIR = OUTPUT_DIR / "figures"
+STRUCTURED_ANALYSIS_PATH = DATA_DIR / "structured_analysis.csv"
+TEXT_DAILY_SUMMARY_PATH = DATA_DIR / "text_daily_summary.csv"
+IMAGE_DAILY_SUMMARY_PATH = DATA_DIR / "image_daily_summary.csv"
+EVENT_WINDOWS_PATH = DATA_DIR / "event_windows.csv"
 EXPORT_ROOT = MODELING_ROOT / "results" / "export" / "daily_horizon30_late_gru_gate_mainline_final"
 OFFICIAL_ROOT = MODELING_ROOT / "results" / "official" / "daily_horizon30"
 EXPORT_SUMMARY_PATH = EXPORT_ROOT / "EXPORT_SUMMARY.json"
@@ -168,11 +172,11 @@ def model_marker_size(role: str | None = None) -> int:
     return 150 if str(role or "") == "mainline" else 90
 
 
-def configure_paper_style() -> None:
+def configure_analysis_style() -> None:
     plt.rcParams.update(
         {
-            "font.family": "serif",
-            "font.serif": ["DejaVu Serif", "Times New Roman", "SimSun"],
+            "font.family": "sans-serif",
+            "font.sans-serif": ["Microsoft YaHei", "SimHei", "SimSun", "Noto Sans CJK SC", "DejaVu Sans"],
             "figure.facecolor": "white",
             "axes.facecolor": "white",
             "axes.edgecolor": PALETTE["line"],
@@ -228,10 +232,9 @@ def load_structured_daily() -> pd.DataFrame:
     return frame
 
 
-def load_chapter3_structured() -> pd.DataFrame:
-    path = DATA_DIR / "chapter3_structured_analysis.csv"
-    if path.exists():
-        frame = pd.read_csv(path, parse_dates=["date"])
+def load_analysis_structured() -> pd.DataFrame:
+    if STRUCTURED_ANALYSIS_PATH.exists():
+        frame = pd.read_csv(STRUCTURED_ANALYSIS_PATH, parse_dates=["date"])
         return frame
     return load_structured_daily()
 
@@ -267,9 +270,8 @@ def load_image_manifest() -> pd.DataFrame:
 
 
 def load_event_windows() -> pd.DataFrame:
-    path = DATA_DIR / "chapter3_event_windows.csv"
-    if path.exists():
-        return pd.read_csv(path, parse_dates=["event_date", "window_7_start", "window_7_end", "window_30_start", "window_30_end"])
+    if EVENT_WINDOWS_PATH.exists():
+        return pd.read_csv(EVENT_WINDOWS_PATH, parse_dates=["event_date", "window_7_start", "window_7_end", "window_30_start", "window_30_end"])
     events = read_jsonl(EVENT_MANIFEST_PATH)
     rows = []
     for event in events:

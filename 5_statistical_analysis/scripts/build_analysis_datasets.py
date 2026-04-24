@@ -5,8 +5,12 @@ import pandas as pd
 from analysis_common import (
     DATA_DIR,
     EVENT_MANIFEST_PATH,
+    EVENT_WINDOWS_PATH,
     IMAGE_DAILY_COVERAGE_CSV_PATH,
+    IMAGE_DAILY_SUMMARY_PATH,
+    STRUCTURED_ANALYSIS_PATH,
     TEXT_DAILY_COVERAGE_CSV_PATH,
+    TEXT_DAILY_SUMMARY_PATH,
     ensure_dirs,
     load_structured_daily,
     read_jsonl,
@@ -43,7 +47,7 @@ def build_structured_package() -> pd.DataFrame:
     ]
     keep = [column for column in keep if column in frame.columns]
     output = frame[keep].copy()
-    output.to_csv(DATA_DIR / "chapter3_structured_analysis.csv", index=False, encoding="utf-8")
+    output.to_csv(STRUCTURED_ANALYSIS_PATH, index=False, encoding="utf-8")
     return output
 
 
@@ -64,7 +68,7 @@ def build_text_summary() -> pd.DataFrame:
         "content_storage",
     ]
     output = text[[column for column in keep if column in text.columns]].copy()
-    output.to_csv(DATA_DIR / "chapter3_text_daily_summary.csv", index=False, encoding="utf-8")
+    output.to_csv(TEXT_DAILY_SUMMARY_PATH, index=False, encoding="utf-8")
     return output
 
 
@@ -85,7 +89,7 @@ def build_image_summary() -> pd.DataFrame:
         "primary_thumbnail_path",
     ]
     output = image[[column for column in keep if column in image.columns]].copy()
-    output.to_csv(DATA_DIR / "chapter3_image_daily_summary.csv", index=False, encoding="utf-8")
+    output.to_csv(IMAGE_DAILY_SUMMARY_PATH, index=False, encoding="utf-8")
     return output
 
 
@@ -111,7 +115,7 @@ def build_event_windows() -> pd.DataFrame:
             }
         )
     output = pd.DataFrame(rows).sort_values("event_date")
-    output.to_csv(DATA_DIR / "chapter3_event_windows.csv", index=False, encoding="utf-8")
+    output.to_csv(EVENT_WINDOWS_PATH, index=False, encoding="utf-8")
     return output
 
 

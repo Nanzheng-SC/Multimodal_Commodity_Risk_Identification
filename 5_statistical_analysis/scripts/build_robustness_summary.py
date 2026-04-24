@@ -12,9 +12,9 @@ from analysis_common import (
     TABLE_DIR,
     display_model_name,
     available_prediction_frames,
-    configure_paper_style,
+    configure_analysis_style,
     ensure_dirs,
-    load_chapter3_structured,
+    load_analysis_structured,
     load_event_windows,
     metrics_for_prediction_frame,
     model_color,
@@ -95,7 +95,7 @@ def build_fold_metrics() -> pd.DataFrame:
 
 
 def build_high_volatility_performance() -> pd.DataFrame:
-    structured = load_chapter3_structured()[["date", "abs_brent_return_1d", "high_volatility_flag"]].copy()
+    structured = load_analysis_structured()[["date", "abs_brent_return_1d", "high_volatility_flag"]].copy()
     structured["date"] = pd.to_datetime(structured["date"])
     frames = available_prediction_frames()
     rows = []
@@ -150,7 +150,7 @@ def save_rolling_score_plot(comparison: pd.DataFrame) -> None:
 
     if comparison.empty:
         return
-    configure_paper_style()
+    configure_analysis_style()
     frame = comparison.sort_values("rolling_score", ascending=False)
     fig, ax = plt.subplots(figsize=(13.5, 7.4))
     colors = [model_color(model, role) for model, role in zip(frame["model"], frame["role"])]
@@ -170,7 +170,7 @@ def save_rmse_direction_scatter(comparison: pd.DataFrame) -> None:
 
     if comparison.empty or "direction_acc_mean" not in comparison.columns:
         return
-    configure_paper_style()
+    configure_analysis_style()
     fig, ax = plt.subplots(figsize=(10.8, 7.2))
     for _, row in comparison.iterrows():
         role = row.get("role", "")
@@ -191,7 +191,7 @@ def save_rmse_direction_scatter(comparison: pd.DataFrame) -> None:
 def save_event_performance_plot(event_perf: pd.DataFrame) -> None:
     import matplotlib.pyplot as plt
 
-    configure_paper_style()
+    configure_analysis_style()
     fig, ax = plt.subplots(figsize=(12.5, 6.8))
     if event_perf.empty:
         ax.text(0.5, 0.5, "No event windows overlap available rolling prediction dates", ha="center", va="center", fontsize=14, color=PALETTE["line"])

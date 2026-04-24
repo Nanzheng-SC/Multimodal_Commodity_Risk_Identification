@@ -7,7 +7,7 @@ from analysis_common import (
     FIGURE_DIR,
     PALETTE,
     TABLE_DIR,
-    configure_paper_style,
+    configure_analysis_style,
     ensure_dirs,
     load_image_manifest,
     load_text_documents,
@@ -131,7 +131,7 @@ def save_top_source_plot(frame: pd.DataFrame, value_col: str, share_col: str, la
     if frame.empty:
         return
     data = frame.head(TOP_N).sort_values(value_col, ascending=True)
-    configure_paper_style()
+    configure_analysis_style()
     fig, ax = plt.subplots(figsize=(13.0, 8.0))
     colors = np.linspace(0.45, 0.9, len(data))
     ax.barh(data[label_col], data[value_col], color=plt.cm.Blues(colors), edgecolor=PALETTE["line"], linewidth=0.7)
@@ -153,7 +153,7 @@ def save_stream_plot(frame: pd.DataFrame) -> None:
     if frame.empty:
         return
     data = frame.sort_values("image_count", ascending=False)
-    configure_paper_style()
+    configure_analysis_style()
     fig, ax = plt.subplots(figsize=(10.8, 6.3))
     ax.bar(data["source_stream"], data["share_of_images"] * 100.0, color=PALETTE["green"], edgecolor=PALETTE["line"], linewidth=0.8)
     for idx, row in enumerate(data.itertuples(index=False)):

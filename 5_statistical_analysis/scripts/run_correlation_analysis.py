@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from analysis_common import FIGURE_DIR, PALETTE, TABLE_DIR, configure_paper_style, ensure_dirs, load_chapter3_structured, save_figure
+from analysis_common import FIGURE_DIR, PALETTE, TABLE_DIR, configure_analysis_style, ensure_dirs, load_analysis_structured, save_figure
 
 
 CORRELATION_VARIABLES = [
@@ -25,7 +25,7 @@ CORRELATION_VARIABLES = [
 def save_heatmap(corr: pd.DataFrame, path) -> None:
     import matplotlib.pyplot as plt
 
-    configure_paper_style()
+    configure_analysis_style()
     fig, ax = plt.subplots(figsize=(12.8, 10.2))
     matrix = corr.to_numpy(float)
     image = ax.imshow(matrix, cmap="RdBu_r", vmin=-1, vmax=1)
@@ -38,7 +38,7 @@ def save_heatmap(corr: pd.DataFrame, path) -> None:
             value = matrix[i, j]
             if np.isfinite(value):
                 ax.text(j, i, f"{value:.2f}", ha="center", va="center", fontsize=8.6, color="white" if abs(value) > 0.55 else PALETTE["line"])
-    ax.set_title("Pearson Correlation Matrix for Chapter 3 Variables", fontsize=16, pad=14)
+    ax.set_title("变量 Pearson 相关矩阵", fontsize=16, pad=14)
     cbar = fig.colorbar(image, ax=ax, fraction=0.046, pad=0.04)
     cbar.set_label("Correlation", fontsize=11)
     fig.tight_layout()
@@ -47,14 +47,14 @@ def save_heatmap(corr: pd.DataFrame, path) -> None:
 
 def main() -> None:
     ensure_dirs()
-    frame = load_chapter3_structured()
+    frame = load_analysis_structured()
     cols = [column for column in CORRELATION_VARIABLES if column in frame.columns]
     data = frame[cols].apply(pd.to_numeric, errors="coerce")
     pearson = data.corr(method="pearson")
     spearman = data.corr(method="spearman")
     pearson.to_csv(TABLE_DIR / "correlation_pearson.csv", encoding="utf-8")
     spearman.to_csv(TABLE_DIR / "correlation_spearman.csv", encoding="utf-8")
-    save_heatmap(pearson, FIGURE_DIR / "chapter3_correlation_heatmap.png")
+    save_heatmap(pearson, FIGURE_DIR / "correlation_heatmap.png")
     print(f"Wrote correlation matrices for {len(cols)} variables")
 
 

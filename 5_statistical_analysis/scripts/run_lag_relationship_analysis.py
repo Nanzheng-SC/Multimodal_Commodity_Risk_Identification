@@ -4,13 +4,14 @@ import numpy as np
 import pandas as pd
 
 from analysis_common import (
-    DATA_DIR,
     FIGURE_DIR,
+    IMAGE_DAILY_SUMMARY_PATH,
     PALETTE,
     TABLE_DIR,
-    configure_paper_style,
+    TEXT_DAILY_SUMMARY_PATH,
+    configure_analysis_style,
     ensure_dirs,
-    load_chapter3_structured,
+    load_analysis_structured,
     save_figure,
     style_axis,
 )
@@ -54,17 +55,15 @@ def _corr_with_pvalue(x: pd.Series, y: pd.Series, method: str) -> tuple[float, f
 
 
 def build_lag_frame() -> pd.DataFrame:
-    structured = load_chapter3_structured().copy()
+    structured = load_analysis_structured().copy()
     structured["date"] = pd.to_datetime(structured["date"])
 
-    text_path = DATA_DIR / "chapter3_text_daily_summary.csv"
-    if text_path.exists():
-        text = pd.read_csv(text_path, parse_dates=["date"])[["date", "text_count", "text_covered"]]
+    if TEXT_DAILY_SUMMARY_PATH.exists():
+        text = pd.read_csv(TEXT_DAILY_SUMMARY_PATH, parse_dates=["date"])[["date", "text_count", "text_covered"]]
         structured = structured.merge(text, on="date", how="left")
 
-    image_path = DATA_DIR / "chapter3_image_daily_summary.csv"
-    if image_path.exists():
-        image = pd.read_csv(image_path, parse_dates=["date"])[["date", "image_count", "image_covered"]]
+    if IMAGE_DAILY_SUMMARY_PATH.exists():
+        image = pd.read_csv(IMAGE_DAILY_SUMMARY_PATH, parse_dates=["date"])[["date", "image_count", "image_covered"]]
         structured = structured.merge(image, on="date", how="left")
 
     for column in ["text_count", "text_covered", "image_count", "image_covered"]:
@@ -127,7 +126,7 @@ def save_lag_heatmap(correlations: pd.DataFrame) -> None:
     pivot = data.pivot_table(index="predictor", columns="lag_days", values="pearson_corr", aggfunc="mean")
     pivot = pivot.reindex([column for column in PREDICTORS if column in pivot.index])
 
-    configure_paper_style()
+    configure_analysis_style()
     fig, ax = plt.subplots(figsize=(13.8, 8.4))
     matrix = pivot.to_numpy(float)
     image = ax.imshow(matrix, cmap="RdBu_r", vmin=-0.5, vmax=0.5, aspect="auto")
@@ -156,7 +155,7 @@ def save_best_lag_plot(best: pd.DataFrame) -> None:
         return
     data = data.sort_values("abs_pearson_corr", ascending=True).tail(12)
 
-    configure_paper_style()
+    configure_analysis_style()
     fig, ax = plt.subplots(figsize=(12.8, 7.2))
     colors = [PALETTE["blue"] if value >= 0 else PALETTE["orange"] for value in data["pearson_corr"]]
     ax.barh(data["predictor"], data["pearson_corr"], color=colors, edgecolor=PALETTE["line"], linewidth=0.75)

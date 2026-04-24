@@ -11,10 +11,10 @@ from analysis_common import (
     MAINLINE_RUN_ID,
     PALETTE,
     TABLE_DIR,
-    configure_paper_style,
+    configure_analysis_style,
     display_model_name,
     ensure_dirs,
-    load_chapter3_structured,
+    load_analysis_structured,
     model_color,
     save_figure,
     style_axis,
@@ -36,13 +36,13 @@ def _short_label(value: str, width: int = 42) -> str:
 def plot_macro_standardized_lines() -> None:
     import matplotlib.pyplot as plt
 
-    frame = load_chapter3_structured().copy()
+    frame = load_analysis_structured().copy()
     frame["date"] = pd.to_datetime(frame["date"])
     columns = [column for column in ["Brent", "WTI", "USD_Index", "EPU", "GPR"] if column in frame.columns]
     if not columns:
         return
 
-    configure_paper_style()
+    configure_analysis_style()
     fig, ax = plt.subplots(figsize=(15.2, 7.4))
     colors = [PALETTE["main"], PALETTE["blue"], PALETTE["green"], PALETTE["orange"], PALETTE["red"]]
     for column, color in zip(columns, colors):
@@ -54,14 +54,14 @@ def plot_macro_standardized_lines() -> None:
     ax.legend(frameon=False, ncol=min(len(columns), 5), loc="upper left")
     style_axis(ax, xgrid=False, ygrid=True)
     fig.tight_layout()
-    save_figure(fig, FIGURE_DIR / "chapter3_macro_standardized_lines.png")
+    save_figure(fig, FIGURE_DIR / "macro_standardized_lines.png")
 
 
 def plot_modality_volume_lines() -> None:
     import matplotlib.pyplot as plt
 
-    text_path = DATA_DIR / "chapter3_text_daily_summary.csv"
-    image_path = DATA_DIR / "chapter3_image_daily_summary.csv"
+    text_path = DATA_DIR / "text_daily_summary.csv"
+    image_path = DATA_DIR / "image_daily_summary.csv"
     if not text_path.exists() or not image_path.exists():
         return
     text = pd.read_csv(text_path, parse_dates=["date"])
@@ -70,7 +70,7 @@ def plot_modality_volume_lines() -> None:
     for column in ["text_count", "image_count"]:
         frame[column] = pd.to_numeric(frame[column], errors="coerce").fillna(0.0)
 
-    configure_paper_style()
+    configure_analysis_style()
     fig, ax1 = plt.subplots(figsize=(15.2, 6.8))
     ax2 = ax1.twinx()
     ax1.plot(frame["date"], frame["text_count"].rolling(30, min_periods=3).mean(), color=PALETTE["blue"], linewidth=2.2, label="Text documents, 30D MA")
@@ -84,7 +84,7 @@ def plot_modality_volume_lines() -> None:
     style_axis(ax1, xgrid=False, ygrid=True)
     ax2.spines["top"].set_visible(False)
     fig.tight_layout()
-    save_figure(fig, FIGURE_DIR / "chapter3_text_image_volume_lines.png")
+    save_figure(fig, FIGURE_DIR / "text_image_volume_lines.png")
 
 
 def plot_lag_profile_lines() -> None:
@@ -107,7 +107,7 @@ def plot_lag_profile_lines() -> None:
     )
     frame = frame[frame["predictor"].isin(predictors)]
 
-    configure_paper_style()
+    configure_analysis_style()
     fig, ax = plt.subplots(figsize=(13.8, 7.4))
     palette = [PALETTE["main"], PALETTE["blue"], PALETTE["green"], PALETTE["orange"], PALETTE["red"], PALETTE["mid"], PALETTE["gray"]]
     for predictor, color in zip(predictors, palette):
@@ -138,7 +138,7 @@ def plot_rolling_fold_rmse_lines() -> None:
         comp = pd.read_csv(comparison_path)
         roles = dict(zip(comp["model"], comp["role"]))
 
-    configure_paper_style()
+    configure_analysis_style()
     fig, ax = plt.subplots(figsize=(12.8, 6.8))
     for model, group in frame.groupby("model", sort=False):
         role = roles.get(model, "baseline_control")
@@ -163,7 +163,7 @@ def plot_rolling_fold_rmse_heatmap() -> None:
         return
     pivot = frame.pivot_table(index="model", columns="fold", values="rmse", aggfunc="mean")
 
-    configure_paper_style()
+    configure_analysis_style()
     fig, ax = plt.subplots(figsize=(11.6, 4.8 + 0.36 * len(pivot)))
     matrix = pivot.to_numpy(float)
     image = ax.imshow(matrix, cmap="YlGnBu", aspect="auto")
@@ -196,7 +196,7 @@ def plot_event_response_heatmap() -> None:
     data = data.reindex(data.abs().max(axis=1).sort_values(ascending=False).index).head(16)
     labels = [_short_label(item, 48) for item in data.index]
 
-    configure_paper_style()
+    configure_analysis_style()
     fig, ax = plt.subplots(figsize=(10.4, 8.4))
     matrix = data.to_numpy(float)
     vmax = float(np.nanmax(np.abs(matrix))) if np.isfinite(matrix).any() else 1.0
@@ -227,7 +227,7 @@ def plot_model_metric_3d_scatter() -> None:
     if frame.empty:
         return
 
-    configure_paper_style()
+    configure_analysis_style()
     fig = plt.figure(figsize=(11.6, 8.6))
     ax = fig.add_subplot(111, projection="3d")
     for _, row in frame.iterrows():
@@ -270,7 +270,7 @@ def plot_lag_correlation_3d_surface() -> None:
     y_values = np.arange(len(pivot.index), dtype=float)
     x_grid, y_grid = np.meshgrid(x_values, y_values)
 
-    configure_paper_style()
+    configure_analysis_style()
     fig = plt.figure(figsize=(12.6, 8.6))
     ax = fig.add_subplot(111, projection="3d")
     surface = ax.plot_surface(x_grid, y_grid, matrix, cmap="RdBu_r", vmin=-0.5, vmax=0.5, linewidth=0.25, edgecolor="white", alpha=0.92)

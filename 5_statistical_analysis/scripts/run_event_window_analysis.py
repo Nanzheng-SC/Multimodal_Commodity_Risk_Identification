@@ -7,9 +7,9 @@ from analysis_common import (
     FIGURE_DIR,
     PALETTE,
     TABLE_DIR,
-    configure_paper_style,
+    configure_analysis_style,
     ensure_dirs,
-    load_chapter3_structured,
+    load_analysis_structured,
     load_event_windows,
     save_figure,
     style_axis,
@@ -53,7 +53,7 @@ def save_event_plot(summary: pd.DataFrame) -> None:
 
     if summary.empty:
         return
-    configure_paper_style()
+    configure_analysis_style()
     frame = summary[summary["window_days"] == 30].copy()
     frame = frame.sort_values("post_abs_return_mean", ascending=True).tail(12)
     labels = frame["event_name"].astype(str).str.slice(0, 42)
@@ -65,12 +65,12 @@ def save_event_plot(summary: pd.DataFrame) -> None:
     ax.set_title("Event Window Brent Response, 30-Day Window")
     style_axis(ax)
     fig.tight_layout()
-    save_figure(fig, FIGURE_DIR / "chapter3_event_window_brent_response.png")
+    save_figure(fig, FIGURE_DIR / "event_window_brent_response.png")
 
 
 def main() -> None:
     ensure_dirs()
-    structured = load_chapter3_structured()
+    structured = load_analysis_structured()
     events = load_event_windows()
     summary = summarize_event_windows(structured, events)
     summary.to_csv(TABLE_DIR / "event_window_response.csv", index=False, encoding="utf-8")

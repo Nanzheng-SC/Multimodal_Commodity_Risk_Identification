@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from analysis_common import EXPORT_ROOT, FIGURE_DIR, MAINLINE_RUN_ID, PALETTE, TABLE_DIR, configure_paper_style, ensure_dirs, save_figure, style_axis
+from analysis_common import EXPORT_ROOT, FIGURE_DIR, MAINLINE_RUN_ID, PALETTE, TABLE_DIR, configure_analysis_style, ensure_dirs, save_figure, style_axis
 
 
 MAINLINE_LABEL = "TimeMixer (fusion; late.gru_gate)"
@@ -26,7 +26,7 @@ GRID_COLOR = PALETTE["grid"]
 def configure_evaluation_style() -> None:
     import matplotlib.pyplot as plt
 
-    configure_paper_style()
+    configure_analysis_style()
     plt.rcParams.update(
         {
             "font.family": "sans-serif",

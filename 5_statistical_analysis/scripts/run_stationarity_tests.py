@@ -20,7 +20,7 @@ _pd_decorators.deprecate_kwarg = _compat_deprecate_kwarg
 
 from statsmodels.tsa.stattools import adfuller, kpss
 
-from analysis_common import TABLE_DIR, ensure_dirs, load_chapter3_structured
+from analysis_common import TABLE_DIR, ensure_dirs, load_analysis_structured
 
 
 TEST_VARIABLES = [
@@ -77,7 +77,7 @@ def run_kpss(values: pd.Series) -> dict:
 
 def main() -> None:
     ensure_dirs()
-    frame = load_chapter3_structured()
+    frame = load_analysis_structured()
     rows = []
     for variable in [item for item in TEST_VARIABLES if item in frame.columns]:
         row = {"variable": variable}
