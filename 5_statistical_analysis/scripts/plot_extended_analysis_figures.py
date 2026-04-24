@@ -296,7 +296,7 @@ def main() -> None:
     plot_event_response_heatmap()
     plot_model_metric_3d_scatter()
     plot_lag_correlation_3d_surface()
-    print(f"Extended paper figures refreshed in {FIGURE_DIR}")
+    print(f"Extended analysis figures refreshed in {FIGURE_DIR}")
 
 
 if __name__ == "__main__":

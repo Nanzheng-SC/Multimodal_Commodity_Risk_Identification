@@ -11,7 +11,7 @@ Main roles:
 Run the scripts in this order:
 
 ```powershell
-python 5_statistical_analysis/scripts/build_chapter3_analysis_data.py
+python 5_statistical_analysis/scripts/build_analysis_datasets.py
 python 5_statistical_analysis/scripts/run_descriptive_stats.py
 python 5_statistical_analysis/scripts/run_stationarity_tests.py
 python 5_statistical_analysis/scripts/run_correlation_analysis.py

@@ -49,8 +49,6 @@ def require_columns(frame: pd.DataFrame, columns: list[str], source: Path) -> No
 def model_color(run_id: str, model: str | None = None) -> str:
     if str(run_id) == MAINLINE_RUN_ID or str(model) == MAINLINE_LABEL:
         return MAIN_COLOR
-    if str(run_id) == "ARIMA" or str(model) == ARIMA_LABEL:
-        return ARIMA_COLOR
     return NEUTRAL_COLOR
 
 
@@ -91,7 +89,7 @@ def plot_fixed_test_overview() -> None:
 
     configure_evaluation_style()
     fig, axes = plt.subplots(1, 2, figsize=(15.8, 7.0), sharey=True, gridspec_kw={"wspace": 0.10})
-    metrics = [("test_rmse_mean", "RMSE（越低越好）"), ("test_mae_mean", "MAE（越低越好）")]
+    metrics = [("test_rmse_mean", "RMSE"), ("test_mae_mean", "MAE")]
     for ax, (column, xlabel) in zip(axes, metrics):
         ax.barh(y, frame[column], color=colors, edgecolor=PALETTE["line"], linewidth=0.75)
         ax.set_yticks(y)
@@ -121,25 +119,24 @@ def plot_rolling_overview_scatter() -> None:
     for _, row in frame.iterrows():
         color = model_color(row["run_id"], row["model"])
         is_mainline = row["run_id"] == MAINLINE_RUN_ID
-        is_arima = row["run_id"] == "ARIMA"
         ax.scatter(
             row["rolling_score"],
             row["direction_pct"],
-            s=145 if is_mainline else 105 if is_arima else 70,
+            s=145 if is_mainline else 70,
             color=color,
             edgecolor=PALETTE["line"],
             linewidth=0.85,
-            alpha=0.95 if (is_mainline or is_arima) else 0.60,
-            zorder=4 if (is_mainline or is_arima) else 2,
+            alpha=0.95 if is_mainline else 0.60,
+            zorder=4 if is_mainline else 2,
         )
 
-    labels_to_show = {MAINLINE_RUN_ID, "ARIMA", "Naive", "HAR-no-leak", "LSTM"}
+    labels_to_show = {MAINLINE_RUN_ID}
     for _, row in frame[frame["run_id"].isin(labels_to_show)].iterrows():
         dx = 0.035
-        dy = 1.0 if row["run_id"] in {MAINLINE_RUN_ID, "ARIMA"} else 0.55
+        dy = 1.0
         ax.text(row["rolling_score"] + dx, row["direction_pct"] + dy, short_model_label(row).replace("\n", " "), fontsize=9.5, color=PALETTE["line"])
 
-    ax.set_xlabel("Rolling score（越低越好）")
+    ax.set_xlabel("Rolling score")
     ax.set_ylabel("方向准确率（%）")
     ax.set_title("Rolling 综合比较")
     ax.set_xlim(float(frame["rolling_score"].min()) - 0.15, float(frame["rolling_score"].max()) + 0.40)
@@ -167,7 +164,7 @@ def plot_dual_panel_bars(frame: pd.DataFrame, labels: list[str], title: str, pat
 
     configure_evaluation_style()
     fig, axes = plt.subplots(1, 2, figsize=(13.8, 5.8), sharey=True, gridspec_kw={"wspace": 0.08})
-    panels = [("test_rmse_mean", "固定测试集 RMSE（越低越好）"), ("rolling_score", "Rolling score（越低越好）")]
+    panels = [("test_rmse_mean", "固定测试集 RMSE"), ("rolling_score", "Rolling score")]
     for ax, (column, xlabel) in zip(axes, panels):
         ax.barh(y, frame[column], color=colors, edgecolor=PALETTE["line"], linewidth=0.75)
         ax.set_yticks(y)
@@ -178,7 +175,7 @@ def plot_dual_panel_bars(frame: pd.DataFrame, labels: list[str], title: str, pat
         style_axis(ax)
     axes[0].invert_yaxis()
     axes[0].set_title("固定测试集")
-    axes[1].set_title("Rolling 稳健性")
+    axes[1].set_title("Rolling 结果")
     fig.suptitle(title, fontsize=16.5, y=0.98)
     fig.subplots_adjust(left=0.18, right=0.985, top=0.84, bottom=0.14, wspace=0.12)
     save_figure(fig, path, dpi=220)
@@ -194,7 +191,7 @@ def plot_multimodal_gain_comparison() -> None:
     plot_dual_panel_bars(
         frame,
         labels,
-        "单模态与多模态增益",
+        "单模态与融合模型比较",
         FIGURE_DIR / "multimodal_gain_comparison.png",
         highlight_run_ids={MAINLINE_RUN_ID},
     )
@@ -206,7 +203,7 @@ def plot_fusion_strategy_comparison() -> None:
     frame = combined[combined["run_id"].isin(order)].copy()
     frame["order"] = frame["run_id"].map({run_id: idx for idx, run_id in enumerate(order)})
     frame = frame.sort_values("order").reset_index(drop=True)
-    labels = ["late.gru_gate\n主线", "late.gru_concat", "intermediate.gated"]
+    labels = ["late.gru_gate", "late.gru_concat", "intermediate.gated"]
     plot_dual_panel_bars(
         frame,
         labels,
@@ -227,13 +224,13 @@ def plot_high_volatility_performance() -> None:
     regime_order = ["normal_or_low_volatility", "high_volatility"]
     regime_labels = {"normal_or_low_volatility": "常态/低波动", "high_volatility": "高风险阶段"}
     model_order = [MAINLINE_LABEL, ARIMA_LABEL]
-    model_labels = {MAINLINE_LABEL: "TimeMixer\n主线", ARIMA_LABEL: "ARIMA"}
+    model_labels = {MAINLINE_LABEL: "TimeMixer\n(fusion; late.gru_gate)", ARIMA_LABEL: "ARIMA"}
     bar_width = 0.34
     x = np.arange(len(model_order))
 
     configure_evaluation_style()
     fig, axes = plt.subplots(1, 2, figsize=(13.6, 5.8), gridspec_kw={"wspace": 0.20})
-    metric_info = [("rmse", "RMSE（越低越好）"), ("direction_acc", "方向准确率（%）")]
+    metric_info = [("rmse", "RMSE"), ("direction_acc", "方向准确率（%）")]
     for ax, (metric, ylabel) in zip(axes, metric_info):
         for offset_idx, regime in enumerate(regime_order):
             subset = frame[frame["regime"].eq(regime)].set_index("model").reindex(model_order)
@@ -250,7 +247,7 @@ def plot_high_volatility_performance() -> None:
         ax.set_xticks(x)
         ax.set_xticklabels([model_labels[model] for model in model_order])
         ax.set_ylabel(ylabel)
-        ax.set_title("高风险阶段更突出" if metric == "rmse" else "方向判断能力")
+        ax.set_title("RMSE" if metric == "rmse" else "方向准确率")
         ax.set_ylim(0, max(float(frame[metric].max() * (100.0 if metric == "direction_acc" else 1.0)) * 1.25, 1.0))
         style_axis(ax, xgrid=False, ygrid=True)
     axes[0].legend(frameon=False, loc="upper left")
@@ -273,18 +270,8 @@ def plot_mainline_fold_stability() -> None:
     ax2 = ax1.twinx()
     ax1.plot(frame["fold"], frame["rmse"], marker="o", linewidth=2.6, markersize=7.5, color=MAIN_COLOR, label="RMSE")
     ax2.plot(frame["fold"], frame["direction_acc"] * 100.0, marker="s", linewidth=2.2, markersize=6.8, color=ARIMA_COLOR, label="方向准确率")
-    ax1.axvspan(5.75, 6.25, color=PALETTE["red"], alpha=0.08)
-    fold6 = frame[frame["fold"].eq(6)].iloc[0]
-    ax1.annotate(
-        "第 6 折显著变难",
-        xy=(6, fold6["rmse"]),
-        xytext=(4.55, fold6["rmse"] * 0.86),
-        arrowprops={"arrowstyle": "->", "color": PALETTE["line"], "lw": 1.1},
-        fontsize=11,
-        color=PALETTE["line"],
-    )
     ax1.set_xlabel("Rolling 折次")
-    ax1.set_ylabel("RMSE（越低越好）", color=MAIN_COLOR)
+    ax1.set_ylabel("RMSE", color=MAIN_COLOR)
     ax2.set_ylabel("方向准确率（%）", color=ARIMA_COLOR)
     ax1.set_xticks(frame["fold"])
     ax1.set_ylim(0, float(frame["rmse"].max()) * 1.18)
@@ -295,7 +282,7 @@ def plot_mainline_fold_stability() -> None:
     ax2.spines["top"].set_visible(False)
     lines = ax1.get_lines() + ax2.get_lines()
     ax1.legend(lines, [line.get_label() for line in lines], frameon=False, loc="upper left")
-    ax1.set_title("主线折次稳定性")
+    ax1.set_title("TimeMixer (fusion; late.gru_gate) 折次结果")
     fig.tight_layout()
     save_figure(fig, FIGURE_DIR / "mainline_fold_stability.png", dpi=220)
 
