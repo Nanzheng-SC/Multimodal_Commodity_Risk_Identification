@@ -223,6 +223,5 @@ def output_config(frequency: str = "monthly") -> dict:
     }
 
 
-# Backward-compatible monthly aliases
 INPUT_PATHS = input_paths("monthly")
 OUTPUT_CONFIG = output_config("monthly")

@@ -1,2 +1,1 @@
-"""HAR monthly baseline."""
 

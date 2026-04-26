@@ -23,7 +23,6 @@ class Exp_Basic(object):
                 device = torch.device('mps')
                 print('Use MPS')
                 return device
-            # 检查CUDA是否可用
             if torch.cuda.is_available():
                 os.environ["CUDA_VISIBLE_DEVICES"] = str(
                     self.args.gpu) if not self.args.use_multi_gpu else self.args.devices
@@ -34,7 +33,6 @@ class Exp_Basic(object):
                     print('Use GPU: cuda:{}'.format(self.args.gpu))
                 print(f'GPU memory: {torch.cuda.get_device_properties(self.args.gpu).total_memory / 1e9:.2f} GB')
             else:
-                # 保持设备选择与运行配置一致，便于在统一环境中复现实验。
                 device = torch.device('cuda:{}'.format(self.args.gpu))
                 print('CUDA not available, but forcing GPU usage')
         else:

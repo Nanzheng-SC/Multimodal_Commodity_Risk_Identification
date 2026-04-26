@@ -18,10 +18,10 @@ for path in (PROJECT_ROOT, MODELING_ROOT):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-from common.metrics import metric_dict  # noqa: E402
-from common.reporting import configure_matplotlib, save_json, save_prediction_artifacts  # noqa: E402
-from project_shared.paths import STRUCTURED_DAILY_PATH  # noqa: E402
-from project_shared.targets import REFERENCE_PRICE_COLUMN, compute_forward_average  # noqa: E402
+from common.metrics import metric_dict
+from common.reporting import configure_matplotlib, save_json, save_prediction_artifacts
+from project_shared.paths import STRUCTURED_DAILY_PATH
+from project_shared.targets import REFERENCE_PRICE_COLUMN, compute_forward_average
 
 
 FREQUENCY = "daily"
@@ -183,12 +183,6 @@ def label_available_history(
     origin_date: str,
     horizon_days: int = HORIZON_DAYS,
 ) -> pd.DataFrame:
-    """Return residual labels observable before a forecast origin.
-
-    The residual target for date t uses Brent through t + horizon_days. For a
-    strict classical baseline, labels whose target window reaches the forecast
-    origin are excluded from the ARIMA history.
-    """
     dates = pd.to_datetime(frame["date"])
     origin = pd.Timestamp(origin_date)
     label_end = dates + pd.Timedelta(days=int(horizon_days))
@@ -272,7 +266,6 @@ def save_test_prediction_files(output_dir: Path, pred: pd.DataFrame) -> None:
         frequency="daily",
     )
 
-    # Add the richer residual columns next to the standard comparison file.
     rich = pred.rename(columns={"target_price": "y_true", "predicted_price": "y_pred"}).copy()
     rich[["date", "y_true", "y_pred", "error", "abs_error", "reference_brent", "target_residual", "predicted_residual"]].to_csv(
         best_run / "predictions_test_with_residuals.csv",
@@ -369,8 +362,6 @@ def update_export_tables(arima_dir: Path, fixed_metrics: dict[str, float], rolli
         ],
         ignore_index=True,
     )
-    # The paper's final selection basis keeps the official mainline first while
-    # baseline controls remain sorted by the same rolling criterion.
     basis["role_order"] = np.where(basis["role"].astype(str) == "mainline", 0, 1)
     basis = basis.sort_values(["role_order", "rolling_score"], na_position="last").drop(columns=["role_order"])
     basis.to_csv(basis_path, index=False, encoding="utf-8")

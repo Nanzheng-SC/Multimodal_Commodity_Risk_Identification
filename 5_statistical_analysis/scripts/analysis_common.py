@@ -20,8 +20,8 @@ for path in (PROJECT_ROOT, MODELING_ROOT):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-from common.metrics import metric_dict  # noqa: E402
-from project_shared.paths import (  # noqa: E402
+from common.metrics import metric_dict
+from project_shared.paths import (
     EVENT_MANIFEST_PATH,
     IMAGE_MANIFEST_CLEANED_GZ_PATH,
     IMAGE_DAILY_COVERAGE_CSV_PATH,
@@ -29,7 +29,7 @@ from project_shared.paths import (  # noqa: E402
     TEXT_DAILY_COVERAGE_CSV_PATH,
     TEXT_DOCUMENTS_CLEANED_GZ_PATH,
 )
-from project_shared.targets import REFERENCE_PRICE_COLUMN, compute_forward_average  # noqa: E402
+from project_shared.targets import REFERENCE_PRICE_COLUMN, compute_forward_average
 
 
 DATA_DIR = ANALYSIS_ROOT / "data"
@@ -153,7 +153,6 @@ def discover_arima_root() -> Path:
         if (candidate / "rolling_predictions.csv").exists() and is_arima_metrics_file(metrics_path):
             return candidate
 
-    # Centralized fallback for a freshly cloned repo before export metadata exists.
     return ARIMA_FAMILY_ROOT / "window_90"
 
 
@@ -263,7 +262,7 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
     rows = []
     opener = gzip.open if path.suffix == ".gz" else open
     mode = "rt" if path.suffix == ".gz" else "r"
-    with opener(path, mode, encoding="utf-8") as handle:  # type: ignore[arg-type]
+    with opener(path, mode, encoding="utf-8") as handle:
         for line in handle:
             line = line.strip()
             if line:

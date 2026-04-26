@@ -9,8 +9,6 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-# statsmodels 0.14.x can import pandas' deprecate_kwarg with the pre-3.0
-# calling convention. Keep this compatibility shim local to the ARIMA runner.
 import pandas.util._decorators as _pd_decorators
 
 _original_deprecate_kwarg = _pd_decorators.deprecate_kwarg
@@ -34,9 +32,9 @@ for path in (PROJECT_ROOT, MODELING_ROOT, ARIMA_ROOT):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-from common.metrics import build_diagnostics, compute_zero_baseline, metric_dict  # noqa: E402
-from common.reporting import save_json  # noqa: E402
-from arima_utils import (  # noqa: E402
+from common.metrics import build_diagnostics, compute_zero_baseline, metric_dict
+from common.reporting import save_json
+from arima_utils import (
     ARIMA_OFFICIAL_ROOT,
     DEFAULT_WINDOW_LENGTH,
     FREQUENCY,
@@ -242,7 +240,6 @@ def run_rolling(combined: pd.DataFrame, output_dir: Path) -> tuple[dict[str, Any
     pred_df.to_csv(output_dir / "rolling_predictions.csv", index=False, encoding="utf-8")
     fold_metrics.to_csv(output_dir / "fold_metrics.csv", index=False, encoding="utf-8")
     order_selection = pd.concat(order_rows, ignore_index=True)
-    # Keep the fixed-test order rows that were written first and append rolling rows later in main().
     return summary, pred_df, fold_metrics, order_selection
 
 

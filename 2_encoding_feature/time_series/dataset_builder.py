@@ -11,9 +11,6 @@ class DatasetBuilder:
         self.test_ratio = TIME_SERIES_CONFIG['test_ratio']
     
     def split_dataset(self, X, y, months):
-        """
-        按时间顺序划分数据集
-        """
         total_samples = len(X)
 
         if self.split_strategy == 'fixed_horizon':
@@ -29,7 +26,6 @@ class DatasetBuilder:
             train_end = int(total_samples * self.train_ratio)
             valid_end = int(total_samples * (self.train_ratio + self.valid_ratio))
         
-        # 划分数据集
         X_train = X[:train_end]
         y_train = y[:train_end]
         months_train = months[:train_end]
@@ -61,28 +57,21 @@ class DatasetBuilder:
         }
     
     def save_dataset(self, dataset, output_dir, window_length):
-        """
-        保存数据集
-        """
         import os
         
-        # 创建窗口长度对应的目录
         window_dir = os.path.join(output_dir, f'window_{window_length}')
         os.makedirs(window_dir, exist_ok=True)
         
-        # 保存训练集
         np.save(os.path.join(window_dir, 'train.npy'), dataset['train']['X'])
         np.save(os.path.join(window_dir, 'train_labels.npy'), dataset['train']['y'])
         np.save(os.path.join(window_dir, 'train_months.npy'), dataset['train']['months'])
         np.save(os.path.join(window_dir, 'train_index.npy'), dataset['train']['months'])
         
-        # 保存验证集
         np.save(os.path.join(window_dir, 'valid.npy'), dataset['valid']['X'])
         np.save(os.path.join(window_dir, 'valid_labels.npy'), dataset['valid']['y'])
         np.save(os.path.join(window_dir, 'valid_months.npy'), dataset['valid']['months'])
         np.save(os.path.join(window_dir, 'valid_index.npy'), dataset['valid']['months'])
         
-        # 保存测试集
         np.save(os.path.join(window_dir, 'test.npy'), dataset['test']['X'])
         np.save(os.path.join(window_dir, 'test_labels.npy'), dataset['test']['y'])
         np.save(os.path.join(window_dir, 'test_months.npy'), dataset['test']['months'])

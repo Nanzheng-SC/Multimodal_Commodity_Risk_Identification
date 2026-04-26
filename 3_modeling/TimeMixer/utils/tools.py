@@ -7,7 +7,6 @@ plt.switch_backend('agg')
 
 
 def adjust_learning_rate(optimizer, scheduler, epoch, args, printout=True):
-    # lr = args.learning_rate * (0.2 ** (epoch // 2))
     if args.lradj == 'type1':
         lr_adjust = {epoch: args.learning_rate * (0.5 ** ((epoch - 1) // 1))}
     elif args.lradj == 'type2':
@@ -61,7 +60,6 @@ class EarlyStopping:
 
 
 class dotdict(dict):
-    """dot.notation access to dictionary attributes"""
     __getattr__ = dict.get
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
@@ -80,17 +78,11 @@ class StandardScaler():
 
 
 def save_to_csv(true, preds=None, name='./pic/test.pdf'):
-    """
-    Results visualization
-    """
     data = pd.DataFrame({'true': true, 'preds': preds})
     data.to_csv(name, index=False, sep=',')
 
 
 def visual(true, preds=None, name='./pic/test.pdf'):
-    """
-    Results visualization
-    """
     plt.figure()
     plt.plot(true, label='GroundTruth', linewidth=2)
     if preds is not None:
@@ -100,11 +92,7 @@ def visual(true, preds=None, name='./pic/test.pdf'):
 
 
 def visual_weights(weights, name='./pic/test.pdf'):
-    """
-    Weights visualization
-    """
     fig, ax = plt.subplots()
-    # im = ax.imshow(weights, cmap='plasma_r')
     im = ax.imshow(weights, cmap='YlGnBu')
     fig.colorbar(im, pad=0.03, location='top')
     plt.savefig(name, dpi=500, pad_inches=0.02)

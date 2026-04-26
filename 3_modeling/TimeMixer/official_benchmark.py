@@ -23,11 +23,11 @@ for path in (PROJECT_ROOT, TIMEMIXER_ROOT, MODELING_ROOT, ENCODING_ROOT):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-from fusion.config import FUSION_CONFIG  # noqa: E402
-from common.metrics import aggregate_metric_dicts, build_diagnostics, compute_zero_baseline, metric_dict  # noqa: E402
-from common.paths import feature_root, time_series_root, timemixer_official_dir, timemixer_scratch_dir  # noqa: E402
-from common.reporting import clean_directory, copy_best_run_visuals, save_json, save_prediction_artifacts, save_seed_metric_plot  # noqa: E402
-from common.window_data import (  # noqa: E402
+from fusion.config import FUSION_CONFIG
+from common.metrics import aggregate_metric_dicts, build_diagnostics, compute_zero_baseline, metric_dict
+from common.paths import feature_root, time_series_root, timemixer_official_dir, timemixer_scratch_dir
+from common.reporting import clean_directory, copy_best_run_visuals, save_json, save_prediction_artifacts, save_seed_metric_plot
+from common.window_data import (
     build_reference_lookup,
     build_rolling_plan,
     compute_future_window,
@@ -36,8 +36,8 @@ from common.window_data import (  # noqa: E402
     load_split_arrays,
     with_reference,
 )
-from models.TimeMixer import Model as TimeMixerModel  # noqa: E402
-from project_shared.frequency import default_window_lengths, normalize_frequency  # noqa: E402
+from models.TimeMixer import Model as TimeMixerModel
+from project_shared.frequency import default_window_lengths, normalize_frequency
 
 
 SUPPORTED_INPUT_VARIANTS = ("fusion", "text", "image", "structured")

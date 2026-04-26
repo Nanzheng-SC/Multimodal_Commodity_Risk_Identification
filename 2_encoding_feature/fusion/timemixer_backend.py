@@ -20,7 +20,7 @@ TIME_MIXER_ROOT = Path(__file__).resolve().parents[2] / "3_modeling" / "TimeMixe
 if str(TIME_MIXER_ROOT) not in sys.path:
     sys.path.insert(0, str(TIME_MIXER_ROOT))
 
-from models.TimeMixer import Model as TimeMixerModel  # noqa: E402
+from models.TimeMixer import Model as TimeMixerModel
 
 
 def mse(pred: np.ndarray, true: np.ndarray) -> float:

@@ -51,7 +51,7 @@
 - `target_brent_avg_next_7d`
 - `target_brent_day7`
 
-其中日表当前实际保存 `15` 列；更长的派生字段清单由 `field_registry.py` 维护，编码阶段会继续扩展。
+其中日表当前实际保存 `15` 列；更长的派生字段清单由 `field_registry.py` 维护，编码阶段按该清单生成特征。
 
 ## 数据来源与规则
 

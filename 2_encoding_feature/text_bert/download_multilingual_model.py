@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""Download multilingual BERT into a project-local model directory."""
 
 from __future__ import annotations
 

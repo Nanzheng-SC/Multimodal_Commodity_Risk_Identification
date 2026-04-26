@@ -75,7 +75,6 @@ def variant_output_dirs(frequency: str = "monthly") -> dict:
     }
 
 
-# Backward-compatible monthly exports
 TIME_SERIES_CONFIG = time_series_config("monthly")
 VARIANT_INPUT_PATHS = variant_input_paths("monthly")
 VARIANT_OUTPUT_DIRS = variant_output_dirs("monthly")

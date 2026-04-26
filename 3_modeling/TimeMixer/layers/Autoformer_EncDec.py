@@ -4,9 +4,6 @@ import torch.nn.functional as F
 
 
 class my_Layernorm(nn.Module):
-    """
-    Special designed layernorm for the seasonal part
-    """
 
     def __init__(self, channels):
         super(my_Layernorm, self).__init__()
@@ -19,9 +16,6 @@ class my_Layernorm(nn.Module):
 
 
 class moving_avg(nn.Module):
-    """
-    Moving average block to highlight the trend of time series
-    """
 
     def __init__(self, kernel_size, stride):
         super(moving_avg, self).__init__()
@@ -29,7 +23,6 @@ class moving_avg(nn.Module):
         self.avg = nn.AvgPool1d(kernel_size=kernel_size, stride=stride, padding=0)
 
     def forward(self, x):
-        # padding on the both ends of time series
         front = x[:, 0:1, :].repeat(1, (self.kernel_size - 1) // 2, 1)
         end = x[:, -1:, :].repeat(1, (self.kernel_size - 1) // 2, 1)
         x = torch.cat([front, x, end], dim=1)
@@ -39,9 +32,6 @@ class moving_avg(nn.Module):
 
 
 class series_decomp(nn.Module):
-    """
-    Series decomposition block
-    """
 
     def __init__(self, kernel_size):
         super(series_decomp, self).__init__()
@@ -54,9 +44,6 @@ class series_decomp(nn.Module):
 
 
 class series_decomp_multi(nn.Module):
-    """
-    Multiple Series decomposition block from FEDformer
-    """
 
     def __init__(self, kernel_size):
         super(series_decomp_multi, self).__init__()
@@ -77,9 +64,6 @@ class series_decomp_multi(nn.Module):
 
 
 class EncoderLayer(nn.Module):
-    """
-    Autoformer encoder layer with the progressive decomposition architecture
-    """
 
     def __init__(self, attention, d_model, d_ff=None, moving_avg=25, dropout=0.1, activation="relu"):
         super(EncoderLayer, self).__init__()
@@ -107,9 +91,6 @@ class EncoderLayer(nn.Module):
 
 
 class Encoder(nn.Module):
-    """
-    Autoformer encoder
-    """
 
     def __init__(self, attn_layers, conv_layers=None, norm_layer=None):
         super(Encoder, self).__init__()
@@ -138,9 +119,6 @@ class Encoder(nn.Module):
 
 
 class DecoderLayer(nn.Module):
-    """
-    Autoformer decoder layer with the progressive decomposition architecture
-    """
 
     def __init__(self, self_attention, cross_attention, d_model, c_out, d_ff=None,
                  moving_avg=25, dropout=0.1, activation="relu"):
@@ -180,9 +158,6 @@ class DecoderLayer(nn.Module):
 
 
 class Decoder(nn.Module):
-    """
-    Autoformer encoder
-    """
 
     def __init__(self, layers, norm_layer=None, projection=None):
         super(Decoder, self).__init__()

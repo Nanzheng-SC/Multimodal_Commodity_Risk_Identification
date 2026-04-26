@@ -6,9 +6,6 @@ from layers.Embed import DataEmbedding_wo_pos
 from layers.StandardNorm import Normalize
 
 class DFT_series_decomp(nn.Module):
-    """
-    Series decomposition block
-    """
 
     def __init__(self, top_k=5):
         super(DFT_series_decomp, self).__init__()
@@ -26,9 +23,6 @@ class DFT_series_decomp(nn.Module):
 
 
 class MultiScaleSeasonMixing(nn.Module):
-    """
-    Bottom-up mixing season pattern
-    """
 
     def __init__(self, configs):
         super(MultiScaleSeasonMixing, self).__init__()
@@ -53,9 +47,7 @@ class MultiScaleSeasonMixing(nn.Module):
 
     def forward(self, season_list):
 
-        # mixing high->low
         if len(season_list) == 1:
-            # 只有一个尺度，直接返回
             return [season_list[0].permute(0, 2, 1)]
         
         out_high = season_list[0]
@@ -75,9 +67,6 @@ class MultiScaleSeasonMixing(nn.Module):
 
 
 class MultiScaleTrendMixing(nn.Module):
-    """
-    Top-down mixing trend pattern
-    """
 
     def __init__(self, configs):
         super(MultiScaleTrendMixing, self).__init__()
@@ -100,9 +89,7 @@ class MultiScaleTrendMixing(nn.Module):
 
     def forward(self, trend_list):
 
-        # mixing low->high
         if len(trend_list) == 1:
-            # 只有一个尺度，直接返回
             return [trend_list[0].permute(0, 2, 1)]
         
         trend_list_reverse = trend_list.copy()
@@ -149,10 +136,8 @@ class PastDecomposableMixing(nn.Module):
                 nn.Linear(in_features=configs.d_ff, out_features=configs.d_model),
             )
 
-        # Mixing season
         self.mixing_multi_scale_season = MultiScaleSeasonMixing(configs)
 
-        # Mxing trend
         self.mixing_multi_scale_trend = MultiScaleTrendMixing(configs)
 
         self.out_cross_layer = nn.Sequential(
@@ -167,7 +152,6 @@ class PastDecomposableMixing(nn.Module):
             _, T, _ = x.size()
             length_list.append(T)
 
-        # Decompose to obtain the season and trend
         season_list = []
         trend_list = []
         for x in x_list:
@@ -178,9 +162,7 @@ class PastDecomposableMixing(nn.Module):
             season_list.append(season.permute(0, 2, 1))
             trend_list.append(trend.permute(0, 2, 1))
 
-        # bottom-up season mixing
         out_season_list = self.mixing_multi_scale_season(season_list)
-        # top-down trend mixing
         out_trend_list = self.mixing_multi_scale_trend(trend_list)
 
         out_list = []
@@ -309,7 +291,6 @@ class Model(nn.Module):
                                   bias=False)
         else:
             return x_enc, x_mark_enc
-        # B,T,C -> B,C,T
         x_enc = x_enc.permute(0, 2, 1)
 
         x_enc_ori = x_enc
@@ -327,11 +308,8 @@ class Model(nn.Module):
             x_enc_ori = x_enc_sampling
 
             if x_mark_enc_mark_ori is not None:
-                # 确保x_mark_enc的序列长度与x_enc的序列长度匹配
                 x_mark_sampling = x_mark_enc_mark_ori[:, ::self.configs.down_sampling_window, :]
-                # 计算下采样后的x_enc长度
                 x_enc_length = x_enc_sampling.shape[2]
-                # 调整x_mark_sampling的长度以匹配x_enc_sampling
                 if x_mark_sampling.shape[1] > x_enc_length:
                     x_mark_sampling = x_mark_sampling[:, :x_enc_length, :]
                 x_mark_sampling_list.append(x_mark_sampling)
@@ -376,57 +354,47 @@ class Model(nn.Module):
                     x = x.permute(0, 2, 1).contiguous().reshape(B * N, T, 1)
                 x_list.append(x)
 
-        # embedding
         enc_out_list = []
         x_list = self.pre_enc(x_list)
         if x_mark_enc is not None:
             for i, x, x_mark in zip(range(len(x_list[0])), x_list[0], x_mark_list):
-                enc_out = self.enc_embedding(x, x_mark)  # [B,T,C]
+                enc_out = self.enc_embedding(x, x_mark)
                 enc_out_list.append(enc_out)
         else:
             for i, x in zip(range(len(x_list[0])), x_list[0]):
-                enc_out = self.enc_embedding(x, None)  # [B,T,C]
+                enc_out = self.enc_embedding(x, None)
                 enc_out_list.append(enc_out)
 
-        # Past Decomposable Mixing as encoder for past
         for i in range(self.layer):
             enc_out_list = self.pdm_blocks[i](enc_out_list)
 
-        # Future Multipredictor Mixing as decoder for future
         dec_out_list = self.future_multi_mixing(B, enc_out_list, x_list)
 
         dec_out = torch.stack(dec_out_list, dim=-1).sum(-1)
-        # 应用反归一化
         dec_out = self.normalize_layers[0](dec_out, 'denorm')
-        # 添加非负约束，确保波动率预测非负
         dec_out = F.softplus(dec_out)
         return dec_out
 
     def future_multi_mixing(self, B, enc_out_list, x_list):
         dec_out_list = []
         if self.channel_independence == 1:
-            N = self.enc_in  # 输入通道数
-            # 处理每个尺度的输入
+            N = self.enc_in
             for i, enc_out in enumerate(enc_out_list):
-                # enc_out形状: (B*N, T, C)
                 dec_out = self.predict_layers[i](enc_out.permute(0, 2, 1)).permute(
-                    0, 2, 1)  # align temporal dimension
+                    0, 2, 1)
                 if self.use_future_temporal_feature:
                     dec_out = dec_out + self.x_mark_dec
                     dec_out = self.projection_layer(dec_out)
                 else:
                     dec_out = self.projection_layer(dec_out)
-                # 现在dec_out形状: (B*N, pred_len, 1)
-                # 将其reshape为(B, N, pred_len, 1)
                 dec_out = dec_out.reshape(B, N, self.pred_len, 1)
-                # 对通道维度求和，得到(B, pred_len, 1)
                 dec_out = dec_out.sum(dim=1)
                 dec_out_list.append(dec_out)
 
         else:
             for i, enc_out, out_res in zip(range(len(x_list[0])), enc_out_list, x_list[1]):
                 dec_out = self.predict_layers[i](enc_out.permute(0, 2, 1)).permute(
-                    0, 2, 1)  # align temporal dimension
+                    0, 2, 1)
                 dec_out = self.out_projection(dec_out, i, out_res)
                 dec_out_list.append(dec_out)
 
@@ -436,26 +404,20 @@ class Model(nn.Module):
         x_enc, _ = self.__multi_scale_process_inputs(x_enc, None)
         x_list = x_enc
 
-        # embedding
         enc_out_list = []
         for x in x_list:
-            enc_out = self.enc_embedding(x, None)  # [B,T,C]
+            enc_out = self.enc_embedding(x, None)
             enc_out_list.append(enc_out)
 
-        # MultiScale-CrissCrossAttention  as encoder for past
         for i in range(self.layer):
             enc_out_list = self.pdm_blocks[i](enc_out_list)
 
         enc_out = enc_out_list[0]
-        # Output
-        # the output transformer encoder/decoder embeddings don't include non-linearity
         output = self.act(enc_out)
         output = self.dropout(output)
-        # zero-out padding embeddings
         output = output * x_mark_enc.unsqueeze(-1)
-        # (batch_size, seq_length * d_model)
         output = output.reshape(output.shape[0], -1)
-        output = self.projection(output)  # (batch_size, num_classes)
+        output = self.projection(output)
         return output
 
     def anomaly_detection(self, x_enc):
@@ -471,13 +433,11 @@ class Model(nn.Module):
                 x = x.permute(0, 2, 1).contiguous().reshape(B * N, T, 1)
             x_list.append(x)
 
-        # embedding
         enc_out_list = []
         for x in x_list:
-            enc_out = self.enc_embedding(x, None)  # [B,T,C]
+            enc_out = self.enc_embedding(x, None)
             enc_out_list.append(enc_out)
 
-        # MultiScale-CrissCrossAttention  as encoder for past
         for i in range(self.layer):
             enc_out_list = self.pdm_blocks[i](enc_out_list)
 
@@ -517,13 +477,11 @@ class Model(nn.Module):
                     x = x.permute(0, 2, 1).contiguous().reshape(B * N, T, 1)
                 x_list.append(x)
 
-        # embedding
         enc_out_list = []
         for x in x_list:
-            enc_out = self.enc_embedding(x, None)  # [B,T,C]
+            enc_out = self.enc_embedding(x, None)
             enc_out_list.append(enc_out)
 
-        # MultiScale-CrissCrossAttention  as encoder for past
         for i in range(self.layer):
             enc_out_list = self.pdm_blocks[i](enc_out_list)
 
@@ -542,12 +500,12 @@ class Model(nn.Module):
             return dec_out
         if self.task_name == 'imputation':
             dec_out = self.imputation(x_enc, x_mark_enc, mask)
-            return dec_out  # [B, L, D]
+            return dec_out
         if self.task_name == 'anomaly_detection':
             dec_out = self.anomaly_detection(x_enc)
-            return dec_out  # [B, L, D]
+            return dec_out
         if self.task_name == 'classification':
             dec_out = self.classification(x_enc, x_mark_enc)
-            return dec_out  # [B, N]
+            return dec_out
         else:
             raise ValueError('Other tasks implemented yet')

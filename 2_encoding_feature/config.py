@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 from __future__ import annotations
 
@@ -30,7 +28,6 @@ from project_shared.paths import (
     time_series_root,
 )
 
-# Raw data paths
 DATA_DIR = os.path.join(BASE_DIR, "1_data_handling", "raw")
 TEXT_DATA_PATH = str(preferred_text_input_path())
 IMAGE_MANIFEST_PATH = str(preferred_image_manifest_path())
@@ -61,7 +58,6 @@ def index_column_name(frequency: str = "monthly") -> str:
     return index_column_for_frequency(frequency)
 
 
-# Backward-compatible monthly defaults
 STRUCTURED_DATA_PATH = structured_data_path("monthly")
 OUTPUT_DIR = str(ENCODING_OUTPUT_ROOT)
 STRUCTURED_FEATURES_DIR = features_dir("structured", "monthly")
@@ -73,10 +69,8 @@ TIME_SERIES_TEXT_DIR = time_series_dir("text", "monthly")
 TIME_SERIES_IMAGE_DIR = time_series_dir("image", "monthly")
 TIME_SERIES_STRUCTURED_DIR = time_series_dir("structured", "monthly")
 
-# Structured columns removed before downstream modeling.
 STRUCTURED_DROP_COLUMNS = []
 
-# Model configuration
 BERT_MODEL_NAME = (
     MULTILINGUAL_BERT_DIR
     if os.path.isdir(MULTILINGUAL_BERT_DIR)
@@ -84,19 +78,15 @@ BERT_MODEL_NAME = (
 )
 CLIP_MODEL_NAME = "openai/clip-vit-base-patch32"
 
-# Text encoding
 MAX_TEXT_LENGTH = 512
 TEXT_SUMMARY_LENGTH = 1000
 
-# Image encoding
 IMAGE_SIZE = (224, 224)
 LIGHT_IMAGE_SIZE = (768, 768)
 LIGHT_IMAGE_WEBP_QUALITY = 82
 
-# Fusion
 UNIFIED_DIM = 256
 
-# Time-series windows
 WINDOW_LENGTHS_BY_FREQUENCY = {
     "daily": default_window_lengths("daily"),
     "monthly": default_window_lengths("monthly"),
@@ -111,7 +101,6 @@ TRAIN_RATIO = 0.7
 VALID_RATIO = 0.15
 TEST_RATIO = 0.15
 
-# Runtime
 BATCH_SIZE = 32
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 SEED = 42

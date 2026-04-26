@@ -13,7 +13,7 @@ class TextPooling:
     def process_all_groups(self, grouped_records, index_column: str):
         monthly_results = []
         for index_value, group in grouped_records:
-            result = self.pool_group(group, encoder=self.encoder)  # pragma: no cover - set by runner
+            result = self.pool_group(group, encoder=self.encoder)
             monthly_results.append(
                 {
                     index_column: index_value,

@@ -11,6 +11,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DASHBOARD_DIR = PROJECT_ROOT / "4_decision_rl"
 EXPORT_ROOT = PROJECT_ROOT / "3_modeling" / "results" / "export" / "daily_horizon30_late_gru_gate_mainline_final"
 OFFICIAL_ROOT = PROJECT_ROOT / "3_modeling" / "results" / "official" / "daily_horizon30"
+ANALYSIS_OUTPUT_ROOT = PROJECT_ROOT / "5_statistical_analysis" / "outputs"
+ANALYSIS_TABLES = ANALYSIS_OUTPUT_ROOT / "tables"
+ANALYSIS_FIGURES = ANALYSIS_OUTPUT_ROOT / "figures"
 STRUCTURED_DAILY = PROJECT_ROOT / "1_data_handling" / "raw" / "structured" / "structured_daily_merged.csv"
 
 DASHBOARD_JSON_PATH = DASHBOARD_DIR / "decision_dashboard_data.json"
@@ -23,10 +26,21 @@ PREDICTION_PATHS = {
     / "window_validation_selected"
     / "best_run"
     / "predictions_test.csv",
-    "Image Only": OFFICIAL_ROOT / "timemixer_image" / "window_90" / "best_run" / "predictions_test.csv",
-    "HAR-M": OFFICIAL_ROOT / "har_no_leak_residual" / "window_30" / "best_run" / "predictions_test.csv",
-    "LSTM-window": OFFICIAL_ROOT / "lstm_residual" / "window_90" / "best_run" / "predictions_test.csv",
+    "ARIMA": OFFICIAL_ROOT / "arima_residual" / "window_90" / "best_run" / "predictions_test.csv",
+    "Naive": OFFICIAL_ROOT / "naive_reference" / "window_90" / "best_run" / "predictions_test.csv",
+    "HAR-no-leak": OFFICIAL_ROOT / "har_no_leak_residual" / "window_30" / "best_run" / "predictions_test.csv",
+    "LSTM": OFFICIAL_ROOT / "lstm_residual" / "window_90" / "best_run" / "predictions_test.csv",
 }
+
+EVALUATION_FIGURES = [
+    ("fixed_test_overview", "固定测试集比较", "fixed_test_overview.png"),
+    ("rolling_overview_scatter", "Rolling 综合比较", "rolling_overview_scatter.png"),
+    ("multimodal_gain_comparison", "单模态与多模态对比", "multimodal_gain_comparison.png"),
+    ("fusion_strategy_comparison", "融合策略比较", "fusion_strategy_comparison.png"),
+    ("high_volatility_performance", "高风险阶段表现", "high_volatility_performance_comparison.png"),
+    ("mainline_fold_stability", "主模型折次稳定性", "mainline_fold_stability.png"),
+    ("mainline_fold_stability_bars", "主模型折次稳定性柱状图", "mainline_fold_stability_bars.png"),
+]
 
 INDUSTRY_PROFILES = [
     {
@@ -181,7 +195,8 @@ def load_prediction_series(structured: pd.DataFrame) -> dict[str, list[dict]]:
 
 def build_leaderboards() -> tuple[list[dict], list[dict], list[dict]]:
     test = pd.read_csv(EXPORT_ROOT / "tables" / "final_test_leaderboard.csv")
-    rolling = pd.read_csv(EXPORT_ROOT / "tables" / "rolling_leaderboard.csv")
+    robustness_path = ANALYSIS_TABLES / "robustness_comparison_table.csv"
+    rolling = pd.read_csv(robustness_path if robustness_path.exists() else EXPORT_ROOT / "tables" / "rolling_leaderboard.csv")
     selection = pd.read_csv(EXPORT_ROOT / "tables" / "final_selection_basis.csv")
     return (
         test.to_dict(orient="records"),
@@ -261,34 +276,19 @@ def classify_risk(predicted_residual: float, reference: float, thresholds: dict)
     }
 
 
+def read_optional_table(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    return pd.read_csv(path).to_dict(orient="records")
+
+
 def build_figures() -> list[dict]:
-    return [
-        {
-            "id": "fusion_vs_unimodal",
-            "title": "多模态输入优势",
-            "path": "3_modeling/results/export/daily_horizon30_late_gru_gate_mainline_final/figures/figure1_multimodal_selection_error.png",
-        },
-        {
-            "id": "timemixer_direction",
-            "title": "方向命中率优势",
-            "path": "3_modeling/results/export/daily_horizon30_late_gru_gate_mainline_final/figures/figure2_timemixer_directional_hit_rate.png",
-        },
-        {
-            "id": "cumulative_direction",
-            "title": "累计方向判断",
-            "path": "3_modeling/results/export/daily_horizon30_late_gru_gate_mainline_final/figures/figure3_timemixer_cumulative_direction_calls.png",
-        },
-        {
-            "id": "prediction_overlay",
-            "title": "预测曲线对比",
-            "path": "3_modeling/results/export/daily_horizon30_late_gru_gate_mainline_final/figures/figure4_test_prediction_overlay.png",
-        },
-        {
-            "id": "advantage_matrix",
-            "title": "综合优势矩阵",
-            "path": "3_modeling/results/export/daily_horizon30_late_gru_gate_mainline_final/figures/figure5_advantage_matrix.png",
-        },
-    ]
+    figures = []
+    for figure_id, title, filename in EVALUATION_FIGURES:
+        path = ANALYSIS_FIGURES / filename
+        if path.exists():
+            figures.append({"id": figure_id, "title": title, "path": rel(path)})
+    return figures
 
 
 def build_payload() -> dict:
@@ -380,12 +380,19 @@ def build_payload() -> dict:
             "predictions": rolling_predictions.to_dict(orient="records"),
             "market_focus_days": market_focus_days.head(12).to_dict(orient="records"),
         },
+        "risk_regime_performance": read_optional_table(ANALYSIS_TABLES / "high_volatility_model_performance.csv"),
         "industry_profiles": INDUSTRY_PROFILES,
         "figures": build_figures(),
         "source_files": {
             "export_summary": rel(EXPORT_ROOT / "EXPORT_SUMMARY.json"),
             "test_leaderboard": rel(EXPORT_ROOT / "tables" / "final_test_leaderboard.csv"),
-            "rolling_leaderboard": rel(EXPORT_ROOT / "tables" / "rolling_leaderboard.csv"),
+            "rolling_leaderboard": rel(
+                ANALYSIS_TABLES / "robustness_comparison_table.csv"
+                if (ANALYSIS_TABLES / "robustness_comparison_table.csv").exists()
+                else EXPORT_ROOT / "tables" / "rolling_leaderboard.csv"
+            ),
+            "risk_regime_performance": rel(ANALYSIS_TABLES / "high_volatility_model_performance.csv"),
+            "evaluation_figures": rel(ANALYSIS_FIGURES),
             "mainline_predictions": rel(PREDICTION_PATHS["TimeMixer-Fusion"]),
             "structured_daily": rel(STRUCTURED_DAILY),
         },

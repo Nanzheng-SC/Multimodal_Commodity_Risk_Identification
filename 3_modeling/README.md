@@ -90,14 +90,14 @@ target = target_brent_avg_next_30d - reference_brent
 
 | 文件 | 描述性说明 |
 | --- | --- |
-| `run_modeling_benchmarks.py` | 这是建模层的统一启动器，用同一套数据窗口和结果目录把 Naive、HAR、LSTM 与 TimeMixer 拉到同一评估口径上。它的价值在于把“主线是否真的更强”变成可复核的统一对照。 |
-| `common/metrics.py` | 该文件定义了 RMSE、MAE、MAPE、方向命中率等核心指标，是所有模型结果可比较的基础。没有这层统一指标实现，不同实验之间就无法形成正式 leaderboard。 |
-| `common/window_data.py` | 这里封装了时间窗口读取和切分逻辑，负责把编码层产物稳定地送入各类模型。它保证基线模型和主线模型看到的是同一份样本切分。 |
-| `TimeMixer/official_benchmark.py` | 这个文件承担正式 TimeMixer 评测流程的封装，用来连接模型训练、验证选择和结果落盘。单模态与多模态 TimeMixer 的官方结果都要经过这一层。 |
-| `TimeMixer/run_fusion_timemixer.py` | 这是单次 TimeMixer 实验的核心入口，负责读取某一输入变体并完成训练、验证和测试。调模型超参数时，最常直接操作的就是这个脚本。 |
-| `TimeMixer/run_horizon30_late_gru_gate_mainline_tuning.py` | 这是当前主线总控文件，负责 late.gru_gate 主线的调优、rolling 复核、结果汇总和图表导出。最终主线之所以能形成一套完整的正式结果，依赖的就是这条脚本链。 |
-| `results/official/daily_horizon30/timemixer_late_gru_gate_mainline_final/official_metrics.json` | 这是主线官方指标的落盘文件，记录最终确认的 test 与 rolling 指标。对外引用“正式结果”时，最权威的数值来源就是它。 |
-| `results/export/daily_horizon30_late_gru_gate_mainline_final/EXPORT_SUMMARY.json` | 这是导出包的总索引，集中汇总当前主线的核心指标、图表和表格路径。前端、汇报材料和人工复核通常都从这份摘要开始定位结果资产。 |
+| `run_modeling_benchmarks.py` | 建模层统一启动器，使用同一数据窗口和结果目录评估 Naive、HAR、LSTM 与 TimeMixer。 |
+| `common/metrics.py` | 指标定义文件，包含 RMSE、MAE、MAPE 和方向命中率。 |
+| `common/window_data.py` | 时间窗口读取和切分逻辑，供基线模型和主线模型共用。 |
+| `TimeMixer/official_benchmark.py` | TimeMixer 正式评测流程封装，连接训练、验证选择和结果落盘。 |
+| `TimeMixer/run_fusion_timemixer.py` | 单次 TimeMixer 实验入口，读取输入变体并完成训练、验证和测试。 |
+| `TimeMixer/run_horizon30_late_gru_gate_mainline_tuning.py` | 当前主线总控文件，负责 `late.gru_gate` 主线调优、rolling 复核、结果汇总和图表导出。 |
+| `results/official/daily_horizon30/timemixer_late_gru_gate_mainline_final/official_metrics.json` | 主线官方指标文件，记录最终 test 与 rolling 指标。 |
+| `results/export/daily_horizon30_late_gru_gate_mainline_final/EXPORT_SUMMARY.json` | 导出包总索引，汇总当前主线核心指标、图表和表格路径。 |
 
 ## 关键脚本
 
@@ -177,10 +177,10 @@ target = target_brent_avg_next_30d - reference_brent
 - `HAR-no-leak`: `6.7441`
 - `LSTM`: `7.2290`
 
-这说明：
+结果摘要：
 - 多模态融合确实优于单模态输入
 - `late.gru_gate` 在主线里比主要融合器对照更稳定
-- TimeMixer 在当前任务上兼顾了误差和方向判断能力，因此成为最终导出模型
+- TimeMixer 在当前任务上同时保留误差和方向指标优势
 
 ## 导出结果资产
 
@@ -200,7 +200,4 @@ target = target_brent_avg_next_30d - reference_brent
 - `figures/figure4_test_prediction_overlay.png`
 - `figures/figure5_advantage_matrix.png`
 
-这些资产同时服务于：
-- 主线模型复核
-- 论文与答辩展示
-- 前端证据面板展示
+这些资产用于主线模型复核、研究材料整理和前端证据面板展示。

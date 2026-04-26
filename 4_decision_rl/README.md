@@ -2,7 +2,7 @@
 
 ## 目录定位
 
-`4_decision_rl` 是项目的展示与业务落地层。它把 `3_modeling` 导出的主线结果转成企业管理者能够直接讨论和使用的风险预警、套保测算和行业传导解释。
+`4_decision_rl` 保存静态展示页面和前端数据构建脚本。该目录读取 `3_modeling` 与 `5_statistical_analysis` 的正式结果，生成可复核的展示数据包。
 
 当前接入的正式模型为：
 - 模型：`TimeMixer`
@@ -26,17 +26,19 @@
 
 | 文件 | 作用 |
 | --- | --- |
-| `build_decision_dashboard_data.py` | 这是前端数据总装脚本，负责把结构化主表、官方模型结果、rolling 指标和行业画像整理成页面可直接消费的数据包。前端之所以能同时展示风险灯、证据页和企业测算，靠的就是这一步统一组装。 |
-| `decision_dashboard_data.json` | 这是标准数据源文件，保存页面运行所需的全部结构化内容。它的角色类似前端的数据底稿，便于独立检查页面展示是否与模型导出保持一致。 |
-| `decision_dashboard_data.js` | 这是为静态页面直接挂载准备的数据镜像，把 JSON 转成浏览器可立即读取的全局变量形式。这样前端可以在不依赖后端服务的情况下完成展示。 |
-| `enterprise_risk_dashboard.html` | 这是最终交互页面本体，承载风险预警、套保测算、行业传导和证据展示四个核心视图。它不是单纯的结果看板，而是整个项目业务落地的展示出口。 |
-| `FRONTEND_RISK_HEDGING_GUIDE.md` | 这份文档解释了前端业务逻辑背后的金融含义，包括风险如何定义、Brent 价格如何向企业成本传导、行业敏感点如何区分以及套保建议为什么成立。它为页面中的警示灯、建议比例和行业画像提供业务解释。 |
+| `build_decision_dashboard_data.py` | 前端数据构建脚本，整合结构化主表、官方模型结果、rolling 指标、风险阶段表现和评估图表。 |
+| `decision_dashboard_data.json` | 页面运行使用的结构化数据源。 |
+| `decision_dashboard_data.js` | 与 JSON 同步的浏览器加载文件，提供静态页面全局数据对象。 |
+| `enterprise_risk_dashboard.html` | 静态交互页面，包含 Dashboard、Assessment、Industry 和 Evidence 四个视图。 |
+| `FRONTEND_RISK_HEDGING_GUIDE.md` | 前端指标口径说明，记录风险信号、行业参数和使用边界。 |
 
 ## 前端数据流
 
 ```text
 3_modeling/results/export/daily_horizon30_late_gru_gate_mainline_final
   + 3_modeling/results/official/daily_horizon30/*
+  + 5_statistical_analysis/outputs/tables
+  + 5_statistical_analysis/outputs/figures
   + 1_data_handling/raw/structured/structured_daily_merged.csv
   -> build_decision_dashboard_data.py
   -> decision_dashboard_data.json / decision_dashboard_data.js
@@ -45,18 +47,18 @@
 
 ## 页面结构
 
-前端当前包含四个主要视图：
+前端当前包含四个视图：
 
 ### 1. Dashboard
 - 英雄区风险预警灯
 - 30 日 Brent 路径监测
-- 行动建议区
+- 风险信号摘要
 
 ### 2. Assessment
 - 企业套保测算面板
 - 风险等级徽章
-- 一句话结论
-- 建议套保比例
+- 暴露测算摘要
+- 套保比例测算
 - 风险下降幅度
 - 结果摘要复制按钮
 
@@ -67,7 +69,7 @@
 ### 4. Evidence
 - 固定 test RMSE 对比
 - Rolling 稳健性对比
-- 模型验证图谱
+- 当前评估图表
 
 ## 前端核心业务逻辑
 
@@ -97,11 +99,11 @@
 
 输出包括：
 - 企业调整后风险值
-- 建议套保比例
+- 测算套保比例
 - 新增套保比例
 - 风险下降幅度
 - 利润波动暴露
-- 管理层一句话摘要
+- 摘要文本
 
 ### 行业传导
 当前预置行业包括：
@@ -130,6 +132,7 @@
 - `official_metrics`
 - `rolling`
 - `risk_signal`
+- `risk_regime_performance`
 - `leaderboards`
 - `prediction_series`
 - `latest_market`
@@ -138,20 +141,9 @@
 - `figures`
 - `source_files`
 
-这意味着前端同时具备：
-- 风险预警
-- 企业测算
-- 行业解释
-- 证据展示
+## 使用口径
 
-## 前端解读
-
-当前前端不是只展示单个预测点，而是把模型结果完整映射到企业风险管理流程：
-
-- 风险灯解决“当前该不该警觉”
-- Brent 路径监测解决“价格风险往哪走”
-- 企业套保测算解决“企业该覆盖多少敞口”
-- 行业传导图谱解决“风险为何会从 Brent 传导到具体行业”
-- 证据页解决“为什么当前这条主线可以作为经营讨论依据”
-
-因此，这个前端既是项目的可视化出口，也是模型结果向业务决策传导的最后一层。
+- 页面展示基于已落盘的模型结果和统计分析输出。
+- `risk_signal` 由最新可验证预测、参考价和 rolling 残差分布阈值生成。
+- Assessment 视图中的企业参数属于情景输入，不改变模型预测结果。
+- Evidence 视图用于核对固定测试、rolling 稳健性和风险阶段评估结果。

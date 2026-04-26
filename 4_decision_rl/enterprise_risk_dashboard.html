@@ -518,9 +518,10 @@
           <div class="legend">
             <span style="color:#17211f">真实 30 日均价</span>
             <span style="color:#226b43">TimeMixer-Fusion</span>
-            <span style="color:#153f5c">Image Only</span>
-            <span style="color:#c2701d">HAR-M</span>
-            <span style="color:#2f71b8">LSTM-window</span>
+            <span style="color:#6b7280">ARIMA</span>
+            <span style="color:#9ca3af">Naive</span>
+            <span style="color:#7d8a86">HAR-no-leak</span>
+            <span style="color:#a7b0ad">LSTM</span>
           </div>
         </section>
         <section class="panel">
@@ -579,16 +580,16 @@
     <section class="view-panel" data-panel="evidence">
       <div class="grid two">
         <section class="panel">
-          <div class="section-title"><div><h2>固定 test RMSE</h2><p>用于说明当前主线相对单模态和传统基线的误差表现。</p></div></div>
+          <div class="section-title"><div><h2>固定 test RMSE</h2><p>当前主线、统计基线和机器学习基线的固定测试集误差表现。</p></div></div>
           <div class="bars" id="testLeaderboard"></div>
         </section>
         <section class="panel">
-          <div class="section-title"><div><h2>Rolling 稳健性</h2><p>用于说明跨期表现，rolling score 越低越好。</p></div></div>
+          <div class="section-title"><div><h2>Rolling 稳健性</h2><p>当前主线、统计基线和机器学习基线的跨期评估表现。</p></div></div>
           <div class="bars" id="rollingLeaderboard"></div>
         </section>
       </div>
       <section class="panel">
-        <div class="section-title"><div><h2>模型验证图谱</h2><p>这些图用于解释为什么当前模型信号可以进入企业风险测算流程。</p></div></div>
+        <div class="section-title"><div><h2>评估图表</h2><p>基于当前结果文件生成的模型对比、稳健性和风险阶段表现。</p></div></div>
         <div class="figure-grid" id="figureGrid"></div>
       </section>
     </section>
@@ -604,7 +605,13 @@
       const pct = (value, digits = 1) => `${Number(value || 0).toFixed(digits)}%`;
       const pctFromRatio = (value, digits = 1) => `${(Number(value || 0) * 100).toFixed(digits)}%`;
       const wan = (value) => `${(Number(value || 0) / 10000).toLocaleString("zh-CN", { maximumFractionDigits: 1, minimumFractionDigits: 1 })} 万元`;
-      const modelLabel = (name) => name === DATA.model?.final_name ? "TimeMixer-Fusion" : name;
+      const mainlineDisplayName = "TimeMixer (fusion; late.gru_gate)";
+      const isMainlineRow = (row) => row?.run_id === DATA.model?.final_name || row?.model === DATA.model?.final_name || row?.model === mainlineDisplayName;
+      const modelLabel = (row) => {
+        const name = typeof row === "string" ? row : row?.model;
+        if (!name) return "";
+        return name === DATA.model?.final_name ? mainlineDisplayName : name;
+      };
 
       let currentIndustry = DATA.industry_profiles?.[0]?.industry || "";
       let latestSummary = "";
@@ -825,9 +832,10 @@
         const datasets = [
           { color: "#17211f", width: 3.5, points: base.map((r) => ({ date: r.date, value: r.actual_30d_avg })) },
           { color: "#226b43", width: 3.3, points: base.map((r) => ({ date: r.date, value: r.predicted_30d_avg })) },
-          { color: "#153f5c", width: 2.1, opacity: .85, points: (s["Image Only"] || []).map((r) => ({ date: r.date, value: r.predicted_30d_avg })) },
-          { color: "#c2701d", width: 2.1, opacity: .85, points: (s["HAR-M"] || []).map((r) => ({ date: r.date, value: r.predicted_30d_avg })) },
-          { color: "#2f71b8", width: 2.1, opacity: .85, points: (s["LSTM-window"] || []).map((r) => ({ date: r.date, value: r.predicted_30d_avg })) },
+          { color: "#6b7280", width: 1.9, opacity: .72, points: (s["ARIMA"] || []).map((r) => ({ date: r.date, value: r.predicted_30d_avg })) },
+          { color: "#9ca3af", width: 1.9, opacity: .72, points: (s["Naive"] || []).map((r) => ({ date: r.date, value: r.predicted_30d_avg })) },
+          { color: "#7d8a86", width: 1.9, opacity: .72, points: (s["HAR-no-leak"] || []).map((r) => ({ date: r.date, value: r.predicted_30d_avg })) },
+          { color: "#a7b0ad", width: 1.9, opacity: .72, points: (s["LSTM"] || []).map((r) => ({ date: r.date, value: r.predicted_30d_avg })) },
         ].filter((d) => d.points.length);
         lineChart($("#predictionChart"), datasets);
       }
@@ -923,8 +931,8 @@
       function renderBars(container, rows, key) {
         const max = Math.max(...rows.map((r) => Number(r[key])));
         container.innerHTML = rows.map((r) => {
-          const isMain = r.model === DATA.model.final_name;
-          return `<div class="bar-row ${isMain ? "mainline" : ""}"><span>${modelLabel(r.model)}</span><div class="bar-track"><div class="bar-fill" style="width:${(Number(r[key]) / max) * 100}%"></div></div><strong>${fmt(r[key])}</strong></div>`;
+          const isMain = isMainlineRow(r);
+          return `<div class="bar-row ${isMain ? "mainline" : ""}"><span>${modelLabel(r)}</span><div class="bar-track"><div class="bar-fill" style="width:${(Number(r[key]) / max) * 100}%"></div></div><strong>${fmt(r[key])}</strong></div>`;
         }).join("");
       }
 

@@ -52,3 +52,4 @@ Thumbs.db
 
 # Local data collection and maintenance scripts excluded from packaged deliverables
 1_data_handling/_collection_scripts/
+5_statistical_analysis/outputs/figures/*2026年4月24日*.png

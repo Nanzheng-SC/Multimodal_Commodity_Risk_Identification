@@ -1,2 +1,1 @@
-"""LSTM monthly baseline."""
 

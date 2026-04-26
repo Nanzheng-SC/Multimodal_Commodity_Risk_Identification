@@ -27,20 +27,20 @@ for path in (PROJECT_ROOT, MODELING_ROOT, TIMEMIXER_ROOT, ENCODING_ROOT):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-from common.metrics import aggregate_metric_dicts, build_diagnostics, compute_zero_baseline, metric_dict  # noqa: E402
-from common.reporting import configure_matplotlib, save_json, save_prediction_artifacts  # noqa: E402
-from official_benchmark import (  # noqa: E402
+from common.metrics import aggregate_metric_dicts, build_diagnostics, compute_zero_baseline, metric_dict
+from common.reporting import configure_matplotlib, save_json, save_prediction_artifacts
+from official_benchmark import (
     DEFAULT_CONFIG,
     build_combined_bundle,
     evaluate_model,
     fit_single_run,
     resolve_training_device,
 )
-from fusion.run_fusion_pipeline import run_fusion_pipeline  # noqa: E402
-from project_shared.paths import ENCODING_OUTPUT_ROOT, STRUCTURED_DAILY_PATH  # noqa: E402
-from project_shared.targets import REFERENCE_PRICE_COLUMN, compute_forward_average  # noqa: E402
-from time_series.dataset_builder import DatasetBuilder  # noqa: E402
-from time_series.window_builder import WindowBuilder  # noqa: E402
+from fusion.run_fusion_pipeline import run_fusion_pipeline
+from project_shared.paths import ENCODING_OUTPUT_ROOT, STRUCTURED_DAILY_PATH
+from project_shared.targets import REFERENCE_PRICE_COLUMN, compute_forward_average
+from time_series.dataset_builder import DatasetBuilder
+from time_series.window_builder import WindowBuilder
 
 
 FREQUENCY = "daily"
@@ -1220,7 +1220,6 @@ def _save_academic_export_figures_legacy(
     figure_dir: Path,
     final_name: str,
 ) -> None:
-    """Create the final paper-style figures used by the export package."""
     figure_dir.mkdir(parents=True, exist_ok=True)
     configure_matplotlib()
     plt.rcParams.update(
@@ -1278,7 +1277,7 @@ def _save_academic_export_figures_legacy(
 
     main_test = float(test_table.loc[test_table["model"].eq(final_name), "test_rmse_mean"].iloc[0])
     main_rolling = float(rolling_table.loc[rolling_table["model"].eq(final_name), "rolling_score"].iloc[0])
-    del main_rolling  # The value is encoded in the plotted table; keep extraction as a schema check.
+    del main_rolling
 
     ordered = [final_name, "Image", "Text", "Structured", "late.gru_concat", "intermediate.gated", "Naive", "HAR-no-leak", "LSTM"]
     frame = test_table.set_index("model").loc[[model for model in ordered if model in set(test_table["model"])]]
@@ -1449,7 +1448,6 @@ def save_academic_export_figures(
     figure_dir: Path,
     final_name: str,
 ) -> None:
-    """Create the two final figures requested for reporting."""
     figure_dir.mkdir(parents=True, exist_ok=True)
     keep = {
         "multimodal_fusion_vs_unimodal_academic.png",
@@ -1523,7 +1521,6 @@ def save_academic_export_figures(
         ax.set_xlim(0, max(plot_frame[metric].max() * 1.28, 1.0))
         style_axis(ax)
 
-    # Figure 1: multimodal fusion vs unimodal inputs.
     modal_models = [final_name, "Image", "Text", "Structured"]
     modal_test = test_table[test_table["model"].isin(modal_models)].copy()
     modal_roll = rolling_table[rolling_table["model"].isin(modal_models)].copy()
@@ -1551,7 +1548,6 @@ def save_academic_export_figures(
     fig.tight_layout(rect=[0, 0, 1, 0.90])
     save(fig, "multimodal_fusion_vs_unimodal_academic.png")
 
-    # Figure 2: TimeMixer mainline vs baseline models.
     baseline_models = [final_name, "Naive", "HAR-no-leak", "LSTM"]
     base_test = test_table[test_table["model"].isin(baseline_models)].copy()
     base_roll = rolling_table[rolling_table["model"].isin(baseline_models)].copy()
@@ -1587,7 +1583,6 @@ def save_reference_style_figures(
     figure_dir: Path,
     final_name: str,
 ) -> None:
-    """Create the three final figures matching the requested reference style."""
     figure_dir.mkdir(parents=True, exist_ok=True)
     keep = {
         "figure1_multimodal_selection_error.png",
@@ -1643,7 +1638,6 @@ def save_reference_style_figures(
         fig.savefig(figure_dir / name, dpi=180, bbox_inches="tight")
         plt.close(fig)
 
-    # Figure 1: reference-style official selection error.
     modal_order = [final_name, "Text", "Structured", "Image"]
     labels = {
         final_name: "Multimodal TimeMixer (w=90/120)",
@@ -1689,7 +1683,6 @@ def save_reference_style_figures(
     add_accent(fig)
     save(fig, "figure1_multimodal_selection_error.png")
 
-    # Figure 2 and 3: official test-window directional calls for TimeMixer vs baselines.
     structured = pd.read_csv(STRUCTURED_DAILY_PATH)
     structured["date"] = pd.to_datetime(structured["date"])
     reference = structured[["date", REFERENCE_PRICE_COLUMN]].copy()
@@ -1844,7 +1837,6 @@ def save_reference_style_figures(
     add_accent(fig)
     save(fig, "figure3_timemixer_cumulative_direction_calls.png")
 
-    # Figure 4: prediction overlay focused on the official test window.
     fig, ax = plt.subplots(figsize=(15.5, 7.6))
     actual = prediction_frames["TimeMixer"].copy()
     ax.plot(actual["date"], actual["y_true"], color="#111827", linewidth=3.2, label="Actual future 30D average", zorder=5)
@@ -1869,7 +1861,6 @@ def save_reference_style_figures(
     add_accent(fig)
     save(fig, "figure4_test_prediction_overlay.png")
 
-    # Figure 5: advantage matrix across the metrics that are easy to explain.
     main_test_row = test_table[test_table["model"] == final_name].iloc[0]
     main_roll_row = rolling_table[rolling_table["model"] == final_name].iloc[0]
     matrix_map = {
@@ -1915,7 +1906,6 @@ def save_reference_style_figures(
     add_accent(fig)
     save(fig, "figure5_advantage_matrix.png")
 
-    # Figure 6: compact result summary dashboard.
     fig = plt.figure(figsize=(16.0, 8.2))
     card_ax = fig.add_axes([0.055, 0.665, 0.89, 0.22])
     card_ax.axis("off")
@@ -1971,7 +1961,6 @@ def save_reference_style_figures(
     add_accent(fig)
     save(fig, "figure6_result_summary_dashboard.png")
 
-    # Figure 7: where TimeMixer reduces absolute error vs competitors.
     fig, ax = plt.subplots(figsize=(15.5, 7.4))
     tm_abs = prediction_frames["TimeMixer"][["date", "abs_error"]].rename(columns={"abs_error": "tm_abs"})
     for model in ["Image Only", "Naive", "HAR-M", "LSTM-window"]:
@@ -1999,7 +1988,6 @@ def save_reference_style_figures(
     add_accent(fig)
     save(fig, "figure7_error_advantage_timeline.png")
 
-    # Figure 8: full rolling-score and direction map as a standalone plot.
     fig, ax = plt.subplots(figsize=(13.8, 7.8))
     label_offsets = {
         final_name: (-26, 10, "right"),

@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 from __future__ import annotations
 
@@ -95,7 +93,6 @@ def _load_source_frame(frequency: str) -> pd.DataFrame:
 
 
 def _add_regime_aware_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Add historical-only state features for daily Brent modeling."""
     if REFERENCE_PRICE_COLUMN not in df.columns:
         return df
 
